@@ -9,10 +9,10 @@ shortest_distance(L)
 \arguments{
 \item{L}{A numeric matrix representing the lengths or distances between nodes in the graph.
 The matrix should be square, with dimensions N x N, where N is the number of nodes. Each
-element L\link{i, j} represents the distance from node i to node j.}
+connection represents the distance from node i to node j.}
 }
 \value{
-A matrix of the same dimension as \code{L}, where each element \link{i, j} represents the
+A matrix of the same dimension as \code{L}, where each connection represents the
 shortest distance from node i to node j in the graph. If a node is unreachable, the distance
 is set to 0.
 }
@@ -20,12 +20,12 @@ is set to 0.
 Computes the shortest paths between nodes in a graph using a variant of Dijkstra's algorithm.
 The function takes a matrix of distances (lengths) between nodes, where the distance inversely
 represents the strength of connection between the nodes. Stronger connections have shorter
-distances. This function is particularly useful for processing matrices derived from weight
-conversion processes, like \code{weight_conversion(W, 'lengths')}.
+distances. This function is particularly useful for processing length matrices derived from the
+function \code{length_inversion(W, 'lengths')}.
 }
 \examples{
-W <- matrix(runif(16), 4, 4) # Random weights for illustration
-L <- weight_conversion(W, 'lengths') # Hypothetical function to convert weights to lengths
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
+L <- length_inversion(W) # Hypothetical function to convert weights to lengths
 shortest_paths <- shortest_distance(L)
 
 }

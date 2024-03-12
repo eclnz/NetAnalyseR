@@ -1,6 +1,6 @@
-#' Calculate the Global Clustering Coefficient for a Weighted Undirected Graph
+#' @title Calculate the Global Clustering Coefficient for a Weighted Undirected Graph
 #'
-#' This function calculates the global clustering coefficient of a weighted undirected graph.
+#' @description This function calculates the global clustering coefficient of a weighted undirected graph.
 #' The global clustering coefficient is a measure of the degree to which nodes in a graph tend to cluster together.
 #' The function first validates the input matrix to ensure it represents a proper adjacency matrix of a graph,
 #' sets the diagonal elements to zero to ignore self-loops, and then computes the mean local clustering coefficient
@@ -11,10 +11,10 @@
 #' @return A numeric value representing the global clustering coefficient of the graph.
 #' @examples
 #' # Example: Create a 3x3 weighted adjacency matrix
-#' W <- matrix(c(0, 2, 1, 2, 0, 3, 1, 3, 0), nrow = 3, byrow = TRUE)
-#' global_clustering_coef_wei(W)
+#' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
+#' global_clustering_coefficient_wei(W)
 #' @export
-global_clustering_coef_wei <- function(W) {
+global_clustering_coefficient_wei <- function(W) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
   validate_matrix(W) # Check if matrix is valid
 
@@ -23,7 +23,7 @@ global_clustering_coef_wei <- function(W) {
 
   # Calculate the mean of local clustering coefficients for all nodes in the graph
   # which represents the global clustering coefficient
-  C <- mean(local_clustering_coef_wu(W))
+  C <- mean(local_clustering_coefficient_wei(W))
 
   # Return the global clustering coefficient
   return(C)
