@@ -25,8 +25,6 @@ to node j.
 }
 \examples{
 # Example usage with a simple 3-node (triangular) graph
-D <- matrix(c(0, 1, 2,
-              1, 0, 1,
-              2, 1, 0), nrow = 3, byrow = TRUE)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 characteristic_path_length(W)
 }

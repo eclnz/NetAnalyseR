@@ -18,11 +18,3 @@ This function checks if the input is a valid square numeric matrix without NA va
 ensuring it is symmetric. If the matrix is not symmetric, it modifies the matrix
 to make it symmetric by mirroring the lower triangular part onto the upper triangular part.
 }
-\examples{
-valid_matrix <- matrix(c(1,2,2,1), nrow=2, ncol=2)
-validate_matrix(valid_matrix)
-
-invalid_matrix <- matrix(c(1,NA,2,1), nrow=2, ncol=2)
-# This will stop execution with an error: "Matrix contains NA values, which are not allowed."
-validate_matrix(invalid_matrix)
-}
