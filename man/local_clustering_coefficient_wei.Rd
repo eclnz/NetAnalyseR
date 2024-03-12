@@ -8,9 +8,7 @@ local_clustering_coefficient_wei(W)
 }
 \arguments{
 \item{W}{A square, symmetric matrix representing the weighted undirected
-connection matrix of the network. Edge weights must be between 0 and 1
-for meaningful interpretation, although this is not strictly enforced
-by the function. Weights can be normalized using \code{weight_conversion()}.}
+connection matrix of the network.}
 }
 \value{
 A numeric vector containing the local clustering coefficient for
@@ -26,8 +24,6 @@ edge weights represent the strength of connections between nodes.
 }
 \examples{
 # Example usage with a simple weighted network
-W <- matrix(c(0, 0.5, 0.2,
-              0.5, 0, 0.4,
-              0.2, 0.4, 0), nrow = 3, byrow = TRUE)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 local_clustering_coefficient_wei(W)
 }
