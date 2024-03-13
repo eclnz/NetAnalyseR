@@ -18,6 +18,9 @@ validate_matrix <- function(W) {
   # Check for NA values in the matrix
   if (any(is.na(W))) {stop("Matrix contains NA values, which are not allowed.")}
 
+  # Check for empty matrix
+  if (max(W)==0) {stop("Matrix must have values greater than zero.")}
+
   # Check if the matrix is square
   if (nrow(W) != ncol(W)) {stop("Matrix W must be square.")}
 
