@@ -48,8 +48,8 @@ local_efficiency_wei <- function(W) {
     # Identify neighbors of the current node
     neighbors <- which(isConnected[node, ] | isConnected[, node])
 
-    # Handle isolated nodes with efficiency set to 0
-    if (length(neighbors) == 1) {
+    # Nodes with one or less neighbors have an efficiency of zero.
+    if (length(neighbors) <= 1) {
       localEfficiencies[node] <- 0
       next
     }
@@ -57,8 +57,17 @@ local_efficiency_wei <- function(W) {
     # Subgraph weights for neighbors
     subgraphWeights <- (as.matrix(cubeRootWeights[node, neighbors] + cubeRootWeights[neighbors, node]))
 
+    # Subgraph lengths for neighbors
+    subgraphLengths <- lengths[neighbors, neighbors]
+
+    # Nodes who's neighbors are not connected to each other have an efficiency of zero
+    if (max(subgraphLengths) == 0) {
+      localEfficiencies[node] <- 0
+      next
+    }
+
     # Calculate distance matrix for the subgraph
-    distances <- 1 / shortest_distance(cubeRootLengths[neighbors, neighbors])
+    distances <- 1 / shortest_distance(subgraphLengths)
 
     # Symmetric efficiency matrix for the subgraph
     efficiencyMatrix <- distances + t(distances)

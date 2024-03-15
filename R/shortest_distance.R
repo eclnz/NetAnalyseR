@@ -21,10 +21,8 @@
 #' @export
 #'
 shortest_distance <- function(L) {
-  L <- validate_matrix(L) # Check if the input matrix is valid
-  if(all(L == floor(L))) {
-    warning("All lengths are integers, this can be a sign you have not converted the matrix to a length matrix")
-  } # Warn if the matrix doesn't seem to be converted to lengths
+  # Check input matrix
+  L <- validate_matrix(L)
 
   # Initialize the distance matrix and set diagonal distances to zero
   diag(L) <- 0 # Self-distances are always zero
