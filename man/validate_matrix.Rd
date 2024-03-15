@@ -4,7 +4,7 @@
 \alias{validate_matrix}
 \title{Validate a Square Numeric Matrix}
 \usage{
-validate_matrix(W)
+validate_matrix(W, skip = FALSE)
 }
 \arguments{
 \item{W}{A matrix to validate.}
@@ -18,3 +18,4 @@ This function checks if the input is a valid square numeric matrix without NA va
 ensuring it is symmetric. If the matrix is not symmetric, it modifies the matrix
 to make it symmetric by mirroring the lower triangular part onto the upper triangular part.
 }
+\keyword{internal}
