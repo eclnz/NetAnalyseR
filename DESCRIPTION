@@ -16,4 +16,7 @@ Imports:
     abind,
     dplyr,
     magrittr,
+    Rcpp,
     tidyr
+LinkingTo: 
+    Rcpp
