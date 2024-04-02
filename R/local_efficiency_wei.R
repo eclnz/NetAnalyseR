@@ -67,7 +67,7 @@ local_efficiency_wei <- function(W) {
     }
 
     # Calculate distance matrix for the subgraph
-    distances <- 1 / shortest_distance(subgraphLengths)
+    distances <- 1 / floydWarshallRcpp(subgraphLengths)
 
     # Symmetric efficiency matrix for the subgraph
     efficiencyMatrix <- distances + t(distances)

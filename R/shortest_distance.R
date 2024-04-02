@@ -1,16 +1,16 @@
 #' @title Calculate the Shortest Path Between Nodes in a Graph
 #'
 #' @description
-#' Computes the shortest paths between nodes in a graph using a variant of Dijkstra's algorithm.
+#' Computes the shortest paths between nodes in a graph using the Floyd Warshall Algorithm.
 #' The function takes a matrix of distances (lengths) between nodes, where the distance inversely
 #' represents the strength of connection between the nodes. Stronger connections have shorter
 #' distances. This function is particularly useful for processing length matrices derived from the
-#' function `length_inversion(W, 'lengths')`.
+#' function `length_inversion(W)`.
 #'
 #' @param L A numeric matrix representing the lengths or distances between nodes in the graph.
 #' The matrix should be square, with dimensions N x N, where N is the number of nodes. Each
 #' connection represents the distance from node i to node j.
-#' @return A matrix of the same dimension as `L`, where each connection represents the
+#' @return A matrix of the same dimension as L, where each connection represents the
 #' shortest distance from node i to node j in the graph. If a node is unreachable, the distance
 #' is set to 0.
 #' @examples
@@ -26,42 +26,9 @@ shortest_distance <- function(L) {
 
   # Initialize the distance matrix and set diagonal distances to zero
   diag(L) <- 0 # Self-distances are always zero
-  n <- nrow(L) # Number of nodes in the graph
-  D <- matrix(Inf, n, n) # Initialize the distance matrix with infinite distances
-  diag(D) <- 0 # Distance to self is zero
 
-  # Main loop to compute shortest distances using Dijkstra's algorithm
-  for (u in 1:n) {
-    S <- rep(TRUE, n) # Initialize all distances as temporary (TRUE)
-    L1 <- L # Copy of the length matrix for manipulation
-    V <- u # Start with the source node
-    repeat {
-      S[V] <- FALSE # Mark the current node's distance as permanent
-      L1[, V] <- 0 # Remove in-edges to the current node as it's already processed
+  # Compute shortest distance with Floyd Warshall Algorithm in C++ call
+  D <- floydWarshallRcpp(L)
 
-      # Update distances to neighbors of the current node
-      for (v in V) {
-        T <- which(L1[v, ] > 0) # Find neighbors of the current node
-        if (length(T) == 0) next # Skip if no neighbors
-
-        # Loop through neighbors to update distances
-        for (t in T) {
-          alt <- D[u, v] + L1[v, t] # Alternative path distance through node v
-          if (alt < D[u, t]) {
-            D[u, t] <- alt # Update distance if it's shorter
-          }
-        }
-      }
-
-      # Check for completion: if all nodes are permanent, or no reachable nodes left
-      if (all(!S)) break
-      minD <- min(D[u, S], na.rm = TRUE)
-      if (is.infinite(minD)) break
-
-      V <- which(D[u, ] == minD) # Find the next node(s) with the shortest tentative distance
-    }
-  }
-
-  D[is.infinite(D)] <- 0 # Replace infinite distances with 0 indicating no path exists
   return(D)
 }
