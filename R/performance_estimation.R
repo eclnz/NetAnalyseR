@@ -53,7 +53,7 @@ benchmark_performance <- function(){
   }
   # Returns proportion difference between execution time of machine and expected execution time on M2 Macbook.
   proportion_difference <- (mean(observed)-mean(estimated))/ mean(observed)
-  return(proportion_difference)
+  return(proportion_difference+1)
 }
 
 #' @keywords internal
