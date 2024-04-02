@@ -20,7 +20,6 @@
 #' global_df <- compute_global_metrics(matrices_array, global_metrics, subject_names)
 #'
 #' @importFrom dplyr select
-#' @importFrom magrittr %>%
 #' @export
 
 compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
@@ -46,6 +45,11 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
     warning("The following global metrics can be used:\n - ",
             paste0(valid_global_metrics, collapse = ", \n - "))
   }
+
+  # # Calculate Processing Time
+  # user_benchmark <- readRDS(paste0(getwd(),"/inst/extdata/performance_difference.rds")) + 1
+  user_benchmark <- benchmark_performance()
+  estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 
   # Compute specified valid metrics
   global <- lapply(valid_user_metrics, function(metric_function) {

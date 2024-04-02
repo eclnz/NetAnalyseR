@@ -49,6 +49,10 @@ compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names =
             paste0(valid_nodal_metrics, collapse = ", \n - "))
   }
 
+  # Estimate duration for execution
+  user_benchmark <- benchmark_performance()
+  estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
+
   # Compute specified valid metrics
   nodal <- lapply(valid_user_metrics, function(metric_function) {
     apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
