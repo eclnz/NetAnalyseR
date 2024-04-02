@@ -97,3 +97,4 @@ process_matrices <- function(directory, subjects_specified, file_convention) {
   # Return the results
   return(list(edge_df = edge_df, matrices = matrix_df, subjects = subjects_present ))
 }
+
