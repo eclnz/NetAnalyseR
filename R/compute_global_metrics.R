@@ -24,13 +24,6 @@
 #' @export
 
 compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
-  # Ensure that 'dplyr' and 'magrittr' are available for the select function and %>% operator
-  if (!requireNamespace("dplyr", quietly = TRUE)) {
-    stop("The 'dplyr' package is required but not installed. Please install it using install.packages('dplyr').")
-  }
-  if (!requireNamespace("magrittr", quietly = TRUE)) {
-    stop("The 'magrittr' package is required for the '%>%' operator but not installed. Please install it using install.packages('magrittr').")
-  }
 
   # Define valid global metrics
   valid_global_metrics <- c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei", "inter_node", "intra_node", "missing_weights", "network_density")
@@ -48,7 +41,6 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
     stop("No valid global metrics were specified. Please use any of the following global metrics:\n - ",
          paste0(valid_global_metrics, collapse = ", \n - "))
   }
-
   # Warn if both valid and invalid metrics were specified
   if (length(valid_user_metrics) > 0 & length(invalid_metrics) > 0) {
     warning("The following global metrics can be used:\n - ",
@@ -73,7 +65,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   }
 
   # Reorder columns to place subject identifier first
-  global_df <- dplyr::select(global_df, .data$subject, dplyr::everything())
+  global_df <- dplyr::select(global_df, subject, dplyr::everything())
 
   return(global_df)
 }
