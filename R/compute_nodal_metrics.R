@@ -67,12 +67,12 @@ compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names =
 
     tidyr::pivot_longer(metric_df, cols = dplyr::starts_with(metric_name), names_to = "subject", values_to = metric_name,
                         names_prefix = paste0(metric_name, "-")) %>%
-      dplyr::arrange(.data$subject)
+      dplyr::arrange(subject)
   })
 
   # Combine metric data frames
   combined_df <- Reduce(function(x, y) merge(x, y, by = c("node", "subject"), all = TRUE), metric_dfs) %>%
-    dplyr::arrange(.data$subject, .data$node)
+    dplyr::arrange(subject, node)
 
   return(combined_df)
 }
