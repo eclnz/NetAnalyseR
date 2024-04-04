@@ -12,9 +12,11 @@ compute_nodal_network_deviation(
 )
 }
 \arguments{
-\item{data_frame}{A data frame where each row corresponds to a single subject. Typically produced using \code{compute_global_metrics()}.}
+\item{data_frame}{A data frame where each row corresponds to a single subject. Typically produced using \code{compute_nodal_metrics()}. Must have a column \code{group} and column \code{subject}.}
 
 \item{matrices_array}{A 3D array where each slice corresponds to a connectivity matrix for a subject.}
+
+\item{control_group}{A character specifying the level of \code{group} which should be considered the control group.}
 
 \item{threshold}{A numeric value defining the Z-score threshold for considering deviations significant.}
 }
@@ -22,15 +24,24 @@ compute_nodal_network_deviation(
 A modified version of the original data frame that includes nodal deviation calculations for each subject.
 }
 \description{
-This function computes nodal network deviations for all subjects in a dataset,
-combining control and case data based on a specified threshold. It leverages the \code{nodal_deviation}
+This function computes nodal network deviations for all nodes for all subjects in a dataset.
+The nodal deviation is calculated as the number of edges of a given node which have a Z score which significantly differ from the
 function to calculate deviations and merges these results back into the original data frame.
 }
 \details{
 Compute nodal network deviations and merge with original data frame
 }
 \examples{
-# Assuming a prepared data_frame with 'subject' and 'group' columns, and matrices_array where each slice [,,i] corresponds to a subject's connectivity matrix.
-# A threshold value is also specified for deviation calculation.
-merged_results <- compute_nodal_network_deviation(data_frame, matrices_array, threshold = 2.5)
+data_dir <- system.file("extdata", package = "NetAnalyseR")
+subjects <- c("A", "B", "C", "D")
+file_convention <- ".csv"
+output <- process_matrices(data_dir, subjects, file_convention)
+nodal_metrics <- c("local_efficiency_wei")
+nodal_df <- compute_nodal_metrics(output$matrices, nodal_metrics, output$subjects)
+grouping_list <- list(
+  control = c("A", "B"),
+  treatment = c("C", "D")
+)
+allocated_df <- allocate_groups(nodal_df, grouping_list)
+nodal_deviation <- compute_nodal_network_deviation(allocated_df, output$matrices, "control")
 }

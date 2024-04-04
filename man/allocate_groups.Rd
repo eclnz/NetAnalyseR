@@ -7,7 +7,7 @@
 allocate_groups(data_frame, grouping_list)
 }
 \arguments{
-\item{data_frame}{A data frame that includes a 'subject' column for participant identifiers.}
+\item{data_frame}{A data frame that includes a 'subject' column for participant identifiers. Generally produced with \code{compute_global_metrics()} or \code{compute_nodal_metrics()}}
 
 \item{grouping_list}{A list where each element is named after a group and contains strings or patterns to match against 'subject' identifiers.}
 }
@@ -24,10 +24,15 @@ and ensures the presence of a 'subject' column in the data frame.
 Allocate subjects to groups based on conditions in a grouping list
 }
 \examples{
-# Assuming a data_frame with 'subject' column and a predefined grouping_list with patterns for each group:
+data_dir <- system.file("extdata", package = "NetAnalyseR")
+subjects <- c("A", "B", "C", "D")
+file_convention <- ".csv"
+output <- process_matrices(data_dir, subjects, file_convention)
+global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
 grouping_list <- list(
-  control = c("^ctrl", "control$"),
-  treatment = c("treat", "experiment")
+  control = c("A", "B"),
+  treatment = c("C", "D")
 )
-allocated_df <- allocate_groups(data_frame, grouping_list)
+allocated_df <- allocate_groups(global_df, grouping_list)
 }

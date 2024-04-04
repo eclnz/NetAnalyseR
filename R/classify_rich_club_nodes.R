@@ -34,16 +34,16 @@ classify_rich_club_nodes <- function(data_frame) {
 
   # Calculate rich club nodes focusing on network-connected entries
   rich_club_nodes <- data_frame %>%
-    dplyr::filter(.data$self_connectivity == "Network-Connected") %>%
+    dplyr::filter(self_connectivity == "Network-Connected") %>%
     tidyr::pivot_longer(cols = c(row, col), names_to = "node_type", values_to = "node") %>%
-    dplyr::group_by(.data$subject, .data$node) %>%
-    dplyr::summarize(strength = sum(.data$edge_strength), .groups = "drop") %>%
-    dplyr::group_by(.data$subject) %>%
-    dplyr::arrange(dplyr::desc(.data$strength)) %>%
+    dplyr::group_by(subject, node) %>%
+    dplyr::summarize(strength = sum(edge_strength), .groups = "drop") %>%
+    dplyr::group_by(subject) %>%
+    dplyr::arrange(dplyr::desc(strength)) %>%
     dplyr::slice(1:10) %>%
     dplyr::ungroup() %>%
-    dplyr::count(.data$node) %>%
-    dplyr::slice_max(order_by = .data$n, n = 10) %>%
+    dplyr::count(node) %>%
+    dplyr::slice_max(order_by = n, n = 10) %>%
     dplyr::ungroup()
 
   # Return the top 10 rich club nodes
