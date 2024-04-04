@@ -56,11 +56,16 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   }
 
   # # Calculate Processing Time
-  # If the user does not want to calculate intensive metrics then set user benchmark to 1 and don't calculate to save time.
-  if(!any(c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei") %in% valid_user_metrics)){
+  # If the user has a small number of smaller matrices to compute, then set benchmark to 1.
+  if(length(matrices_array)<125000){
     user_benchmark <- 1
   } else{
-    user_benchmark <- benchmark_performance()
+    # If the user does not want to calculate intensive metrics then set user benchmark to 1.
+    if(!any(c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei") %in% valid_user_metrics)){
+      user_benchmark <- 1
+    } else{
+      user_benchmark <- benchmark_performance()
+    }
   }
   estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 

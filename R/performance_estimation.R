@@ -118,6 +118,10 @@ calculate_metric_duration <- function(metric_name, matrices_array, user_benchmar
   model <- readRDS(model_path)
   number <- dim(matrices_array)[3]
   duration <- prediction_estimate(matrices_array, model) * user_benchmark * number
+  # For very small network sizes the time predicted is negative.
+  if(duration<0){
+    duration <- 0
+  }
   duration <- round(duration,2)
   duration_time <- convert_seconds_to_hms(as.numeric(duration))
   tab_spacings <- list(
