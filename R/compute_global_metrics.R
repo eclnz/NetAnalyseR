@@ -24,6 +24,15 @@
 
 compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
 
+  if(!is.array(matrices_array)){
+    stop("Matrices array is not in array format")
+  }
+  if(!is.character(subject_names)){
+    stop("Subject names is not in character format")
+  }
+  if(!is.character(global_metrics)){
+    stop("Global metrics is not in character format")
+  }
   # Define valid global metrics
   valid_global_metrics <- c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei", "inter_node", "intra_node", "missing_weights", "network_density")
 
@@ -47,8 +56,12 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   }
 
   # # Calculate Processing Time
-  # user_benchmark <- readRDS(paste0(getwd(),"/inst/extdata/performance_difference.rds")) + 1
-  user_benchmark <- benchmark_performance()
+  # If the user does not want to calculate intensive metrics then set user benchmark to 1 and don't calculate to save time.
+  if(!any(c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei") %in% valid_user_metrics)){
+    user_benchmark <- 1
+  } else{
+    user_benchmark <- benchmark_performance()
+  }
   estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 
   # Compute specified valid metrics
