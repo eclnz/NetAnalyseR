@@ -32,10 +32,19 @@ using a specified threshold.
 Compute network deviations for a given dataset and matrices array
 }
 \examples{
-# data_frame is a data frame with columns 'group' and 'subject'.
-# matrices_array is a 3D array where the third dimension corresponds to individuals in the data_frame.
-# Assuming network_deviation is a predefined function that takes a threshold as an argument.
-result <- compute_network_deviation(data_frame, matrices_array, 2.5)
+data_dir <- system.file("extdata", package = "NetAnalyseR")
+subjects <- c("A", "B", "C", "D")
+file_convention <- ".csv"
+output <- process_matrices(data_dir, subjects, file_convention)
+global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
+grouping_list <- list(
+  control = c("A", "B"),
+  treatment = c("C", "D")
+)
+allocated_df <- allocate_groups(global_df, grouping_list)
+global_deviation <- compute_network_deviation(allocated_df, output$matrices, "control")
+# Or use dplyr:
 }
 \references{
 Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392

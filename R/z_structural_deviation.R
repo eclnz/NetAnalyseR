@@ -49,10 +49,19 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' @param threshold A numeric value defining the Z-score threshold for considering deviations as significant.
 #' @return A data frame that joins the input data_frame with computed network deviations for each case.
 #' @examples
-#' # data_frame is a data frame with columns 'group' and 'subject'.
-#' # matrices_array is a 3D array where the third dimension corresponds to individuals in the data_frame.
-#' # Assuming network_deviation is a predefined function that takes a threshold as an argument.
-#' result <- compute_network_deviation(data_frame, matrices_array, 2.5)
+#' data_dir <- system.file("extdata", package = "NetAnalyseR")
+#' subjects <- c("A", "B", "C", "D")
+#' file_convention <- ".csv"
+#' output <- process_matrices(data_dir, subjects, file_convention)
+#' global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+#' global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
+#' grouping_list <- list(
+#'   control = c("A", "B"),
+#'   treatment = c("C", "D")
+#' )
+#' allocated_df <- allocate_groups(global_df, grouping_list)
+#' global_deviation <- compute_network_deviation(allocated_df, output$matrices, "control")
+#' # Or use dplyr:
 #' @references Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392
 #' @export
 
@@ -136,17 +145,28 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
 #' Compute nodal network deviations and merge with original data frame
 #'
 #' @title Compute Nodal Network Deviations
-#' @description This function computes nodal network deviations for all subjects in a dataset,
-#' combining control and case data based on a specified threshold. It leverages the `nodal_deviation`
+#' @description This function computes nodal network deviations for all nodes for all subjects in a dataset.
+#' The nodal deviation is calculated as the number of edges of a given node which have a Z score which significantly differ from the
 #' function to calculate deviations and merges these results back into the original data frame.
-#' @param data_frame A data frame where each row corresponds to a single subject. Typically produced using `compute_global_metrics()`.
+#' @param data_frame A data frame where each row corresponds to a single subject. Typically produced using `compute_nodal_metrics()`. Must have a column `group` and column `subject`.
 #' @param matrices_array A 3D array where each slice corresponds to a connectivity matrix for a subject.
+#' @param control_group A character specifying the level of `group` which should be considered the control group.
 #' @param threshold A numeric value defining the Z-score threshold for considering deviations significant.
 #' @return A modified version of the original data frame that includes nodal deviation calculations for each subject.
 #' @examples
-#' # Assuming a prepared data_frame with 'subject' and 'group' columns, and matrices_array where each slice [,,i] corresponds to a subject's connectivity matrix.
-#' # A threshold value is also specified for deviation calculation.
-#' merged_results <- compute_nodal_network_deviation(data_frame, matrices_array, threshold = 2.5)
+#' data_dir <- system.file("extdata", package = "NetAnalyseR")
+#' subjects <- c("A", "B", "C", "D")
+#' file_convention <- ".csv"
+#' output <- process_matrices(data_dir, subjects, file_convention)
+#' nodal_metrics <- c("local_efficiency_wei")
+#' nodal_df <- compute_nodal_metrics(output$matrices, nodal_metrics, output$subjects)
+#' grouping_list <- list(
+#'   control = c("A", "B"),
+#'   treatment = c("C", "D")
+#' )
+#' allocated_df <- allocate_groups(nodal_df, grouping_list)
+#' nodal_deviation <- compute_nodal_network_deviation(allocated_df, output$matrices, "control")
+#' @importFrom dplyr left_join distinct
 #' @export
 
 compute_nodal_network_deviation <- function(data_frame, matrices_array, control_group, threshold= 3) {
@@ -166,7 +186,7 @@ compute_nodal_network_deviation <- function(data_frame, matrices_array, control_
     stop("No observations of the control group ", control_group, " were found", call. = FALSE)
   }
   # Dataframe of controls not in long format (one row per subject the same as the matrices array)
-  short_df <- data_frame %>% distinct(subject, group, subject)
+  short_df <- data_frame %>% dplyr::distinct(subject, group, subject)
   # Identify control and case indices based on the group column
   ctrl_indices <- which(short_df$group == control_group)
   # Extract control and case arrays based on identified indices

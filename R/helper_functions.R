@@ -5,16 +5,21 @@
 #' This function iterates over each subject identifier, checks against provided patterns in the grouping list, and assigns
 #' the corresponding group label if a match is found. It enforces strict input types for the data frame and grouping list
 #' and ensures the presence of a 'subject' column in the data frame.
-#' @param data_frame A data frame that includes a 'subject' column for participant identifiers.
+#' @param data_frame A data frame that includes a 'subject' column for participant identifiers. Generally produced with `compute_global_metrics()` or `compute_nodal_metrics()`
 #' @param grouping_list A list where each element is named after a group and contains strings or patterns to match against 'subject' identifiers.
 #' @return A data frame with an additional 'group' column indicating the group allocation for each subject.
 #' @examples
-#' # Assuming a data_frame with 'subject' column and a predefined grouping_list with patterns for each group:
+#' data_dir <- system.file("extdata", package = "NetAnalyseR")
+#' subjects <- c("A", "B", "C", "D")
+#' file_convention <- ".csv"
+#' output <- process_matrices(data_dir, subjects, file_convention)
+#' global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+#' global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
 #' grouping_list <- list(
-#'   control = c("^ctrl", "control$"),
-#'   treatment = c("treat", "experiment")
+#'   control = c("A", "B"),
+#'   treatment = c("C", "D")
 #' )
-#' allocated_df <- allocate_groups(data_frame, grouping_list)
+#' allocated_df <- allocate_groups(global_df, grouping_list)
 #' @export
 #' @importFrom dplyr mutate
 #' @importFrom purrr map_chr

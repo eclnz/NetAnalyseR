@@ -18,6 +18,8 @@ Imports:
     dplyr,
     magrittr,
     Rcpp,
-    tidyr
+    tidyr,
+    purrr,
+    stringr
 LinkingTo: 
     Rcpp
