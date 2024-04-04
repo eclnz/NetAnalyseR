@@ -31,6 +31,15 @@ process_matrices <- function(directory, subjects_specified, file_convention) {
   if (!dir.exists(directory)) {
     stop("Directory does not exist: ", directory)
   }
+  if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
+    stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
+  }
+  if (is.character(file_convention)!=TRUE){
+    stop("File convention must be supplied as a character: ", file_convention)
+  }
+  if (length(file_convention)!=1){
+    stop("File convention must have a length of 1: ", file_convention)
+  }
 
   # Initialize lists to store results
   subjects_present <- c()
@@ -43,7 +52,6 @@ process_matrices <- function(directory, subjects_specified, file_convention) {
     # Construct file path from directory, subject ID, and file convention
     file_path <- file.path(directory, paste0(subj, file_convention))
 
-    # Check if the file exists for the current subject
     if (!file.exists(file_path)) {
       warning("Missing file for subject: ", subj)
       next
@@ -65,7 +73,7 @@ process_matrices <- function(directory, subjects_specified, file_convention) {
     matrices_list[[subj]] <- matrix
 
     # Identify lower triangle indices
-    lower_triangle_indices <- which(lower.tri(matrix), arr.ind = TRUE)
+    lower_triangle_indices <- which(lower.tri(matrix, diag = TRUE), arr.ind = TRUE)
 
     # Create a dataframe for edges in the lower triangle
     subject_df <- data.frame(
@@ -97,4 +105,5 @@ process_matrices <- function(directory, subjects_specified, file_convention) {
   # Return the results
   return(list(edge_df = edge_df, matrices = matrix_df, subjects = subjects_present ))
 }
+
 
