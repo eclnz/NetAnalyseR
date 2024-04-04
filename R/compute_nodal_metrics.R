@@ -49,13 +49,19 @@ compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names =
             paste0(valid_nodal_metrics, collapse = ", \n - "))
   }
 
-  # # Calculate Processing Time
-  # If the user does not want to calculate intensive metrics then set user benchmark to 1 and don't calculate to save time.
-  if(!any(c("local_clustering_coefficient_wei", "local_efficiency_wei") %in% valid_user_metrics)){
+  # Calculate Processing Time
+  # If the user has a small number of smaller matrices to compute, then shortcut benchmark.
+  if(length(matrices_array)<125000){
     user_benchmark <- 1
   } else{
-    user_benchmark <- benchmark_performance()
+    # If the user does not want to calculate intensive metrics then set user benchmark to 1 and don't calculate to save time.
+    if(!any(c("local_clustering_coefficient_wei", "local_efficiency_wei") %in% valid_user_metrics)){
+      user_benchmark <- 1
+    } else{
+      user_benchmark <- benchmark_performance()
+    }
   }
+
   estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 
   # Compute specified valid metrics
