@@ -21,7 +21,7 @@ validate_matrix <- function(W, skip = FALSE) {
   if (any(is.na(W))) {stop("Matrix contains NA values, which are not allowed.")}
 
   # Check for empty matrix
-  if (max(W)==0) {stop("Matrix must have values greater than zero.")}
+  # if (max(W)==0) {stop("Matrix must have values greater than zero.")}
 
   # Check if the matrix is square
   if (nrow(W) != ncol(W)) {stop("Matrix W must be square.")}
