@@ -18,7 +18,6 @@ between every pair of vertices in a given edge weighted directed Graph. It opera
 }
 \examples{
 # Define the adjacency matrix for a graph
-W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 # Calculate shortest paths
 shortestPaths <- floydWarshallRcpp(W)
 print(shortestPaths)

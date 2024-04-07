@@ -61,7 +61,6 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' )
 #' allocated_df <- allocate_groups(global_df, grouping_list)
 #' global_deviation <- compute_network_deviation(allocated_df, output$matrices, "control")
-#' # Or use dplyr:
 #' @references Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392
 #' @export
 
@@ -167,6 +166,7 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
 #' allocated_df <- allocate_groups(nodal_df, grouping_list)
 #' nodal_deviation <- compute_nodal_network_deviation(allocated_df, output$matrices, "control")
 #' @importFrom dplyr left_join distinct
+#' @references Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392
 #' @export
 
 compute_nodal_network_deviation <- function(data_frame, matrices_array, control_group, threshold= 3) {
