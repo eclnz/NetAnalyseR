@@ -40,6 +40,17 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
         }
     }
     
+    // Edge cases handling
+    if (K == 0) {
+//        Rcpp::Rcout << "Network has no connections. Rewiring is not applicable." << std::endl;
+        return R; // Return the original matrix unmodified
+    }
+    
+    if (K == 1) {
+//        Rcpp::Rcout << "Network has only one connection. Rewiring would not alter the structure." << std::endl;
+        return R; // Return the original matrix unmodified
+    }
+    
     // Calculate network density
     double density = 2 * K / static_cast<double>(n * (n - 1));
     if (density == 1) {
