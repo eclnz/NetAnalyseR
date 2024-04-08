@@ -17,9 +17,6 @@ This function implements the Floyd-Warshall algorithm using Rcpp for finding the
 between every pair of vertices in a given edge weighted directed Graph. It operates on a matrix representation of the graph.
 }
 \examples{
-# Define the adjacency matrix for a graph
-W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
-# Calculate shortest paths
+W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
 shortestPaths <- floydWarshallRcpp(W)
-print(shortestPaths)
 }
