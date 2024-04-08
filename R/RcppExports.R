@@ -15,10 +15,8 @@ rewireTwoNetworksCpp <- function(originalMatrix, secondaryMatrix, initialIter) {
 #' @return A NumericMatrix where the element at the ith row and jth column represents the shortest distance from vertex i
 #' to vertex j in the input graph.
 #' @examples
-#' # Define the adjacency matrix for a graph
-#' # Calculate shortest paths
+#' W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' shortestPaths <- floydWarshallRcpp(W)
-#' print(shortestPaths)
 #' @export
 NULL
 
@@ -47,13 +45,14 @@ rewireNetworkCpp <- function(R, initialIter) {
 #' and then continues to rewire the network with 1 iteration for each subsequent step,
 #' saving the state of the matrix after each single rewiring. This process is repeated
 #' until 'n' rewired matrices are generated.
-#'
+#' The output is in the format of a list. If manually using the output in normalised mesures
+#' the output must be converted to an array with `abind::abind(matrix, along = 3)`
 #' @param initialMatrix A numeric matrix representing the initial network's adjacency matrix.
 #' @param n The number of rewired matrices to generate.
 #'
 #' @return A list of 'n' rewired matrices.
 #' @export
-generateRewiredMatrices <- function(initialMatrix, n) {
+generateRewiredMatrices <- function(initialMatrix, n = 100L) {
     .Call(`_NetAnalyseR_generateRewiredMatrices`, initialMatrix, n)
 }
 

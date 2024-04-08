@@ -62,6 +62,7 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' allocated_df <- allocate_groups(global_df, grouping_list)
 #' global_deviation <- compute_network_deviation(allocated_df, output$matrices, "control")
 #' @references Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392
+#' @importFrom stats sd
 #' @export
 
 compute_network_deviation <- function(data_frame, matrices_array, control_group, threshold = 3) {
@@ -95,7 +96,7 @@ compute_network_deviation <- function(data_frame, matrices_array, control_group,
 nodal_deviation <- function(control_array, matrices_array, subject_names = NULL, threshold) {
   # Calculate the mean and standard deviation for the control group
   mean_control <- apply(control_array, c(1, 2), mean)
-  sd_control <- apply(control_array, c(1, 2), sd)
+  sd_control <- apply(control_array, c(1, 2), stats::sd)
   mean_control_bin_35 <- apply(control_array>0, c(1, 2), mean)>0.35
 
 
