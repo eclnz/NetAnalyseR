@@ -13,10 +13,13 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports:
+    stats,
     abind,
     dplyr,
     magrittr,
     Rcpp,
-    tidyr
+    tidyr,
+    purrr,
+    stringr
 LinkingTo: 
     Rcpp

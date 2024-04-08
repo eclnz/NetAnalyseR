@@ -1,1 +1,6 @@
 .Rproj.user
+.Rhistory
+<<<<<<< HEAD
+inst/extdata/.Rapp.history
+=======
+>>>>>>> NetAnalyseR/TimingEstimate

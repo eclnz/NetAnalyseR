@@ -13,21 +13,50 @@
 #' to a subject and columns for the subject identifier and the calculated metric values.
 #'
 #' @examples
+<<<<<<< HEAD
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' matrices_array <- array(W, dim = c(3, 3, 1))
-#' global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+#' global_metrics <- c("characteristic_path_length", "global_efficiency_wei, ")
+=======
+#' W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
+#' valid_global_metrics <- c("characteristic_path_length",
+#'                           "global_clustering_coefficient_wei",
+#'                           "global_efficiency_wei",
+#'                           "inter_node",
+#'                           "intra_node",
+#'                           "network_density",
+#'                           "normalised_clustering_coefficient",
+#'                           "normalised_characteristic_path_length",
+#'                           "small_worldness")
+>>>>>>> f4425e4 (Normalised Metrics)
 #' subject_names <- c("Subject1")
-#' global_df <- compute_global_metrics(matrices_array, global_metrics, subject_names)
+#' global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
 #'
 #' @importFrom dplyr select
-#' @importFrom magrittr %>%
+#' @importFrom abind abind
 #' @export
 
 compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
+  # If the user submits a single matrix the dimensions of the matrix as an array must be set.
+  if(is.na(dim(matrices_array)[3])){
+    dim(matrices_array)[3] <- 1
+  }
 
+  if(!is.array(matrices_array)){
+    stop("Matrices array is not in array format")
+  }
+  # If subject names is specified, stop if it is not character.
+  if(!is.null(subject_names)){
+    if(!is.character(subject_names)){
+      stop("Subject names is not in character format")
+    }
+  }
+  if(!is.character(global_metrics)){
+    stop("Global metrics is not in character format")
+  }
   # Define valid global metrics
-  valid_global_metrics <- c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei", "inter_node", "intra_node", "missing_weights", "network_density")
-
+  valid_global_metrics <- c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei", "inter_node", "intra_node", "missing_weights", "network_density", "normalised_clustering_coefficient", "normalised_characteristic_path_length", "small_worldness")
+  if("small_worldness" %in% valid_global_metrics )
   # Identify any specified metrics that are not valid
   invalid_metrics <- global_metrics[!global_metrics %in% valid_global_metrics]
   if (length(invalid_metrics) > 0) {
@@ -47,14 +76,68 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
             paste0(valid_global_metrics, collapse = ", \n - "))
   }
 
-  # Compute specified valid metrics
-  global <- lapply(valid_user_metrics, function(metric_function) {
-    apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
-  })
+  # # Calculate Processing Time
+  # If the user has a small number of smaller matrices to compute, then set benchmark to 1.
+  if(length(matrices_array)<125000){
+    user_benchmark <- 1
+  } else{
+    # If the user does not want to calculate intensive metrics then set user benchmark to 1.
+    if(!any(c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei") %in% valid_user_metrics)){
+      user_benchmark <- 1
+    } else{
+      user_benchmark <- benchmark_performance()
+    }
+  }
+  random_metrics <- c("normalised_clustering_coefficient", "normalised_characteristic_path_length", "small_worldness")
+  user_non_random_metrics <- valid_user_metrics[!valid_user_metrics %in% random_metrics]
+  user_random_metrics <-valid_user_metrics[valid_user_metrics %in% random_metrics]
+
+  estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
+
+  if(!is.null(user_non_random_metrics)){
+    global <- lapply(user_non_random_metrics, function(metric_function) {
+      apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
+      })
+  }
 
   # Create a data frame from the global metrics
   global_df <- data.frame(lapply(global, as.numeric))
-  colnames(global_df) <- valid_user_metrics
+  colnames(global_df) <- user_non_random_metrics
+
+  if(!is.null(user_random_metrics)){
+
+    rand_array <- apply(matrices_array, MARGIN = 3, generateRewiredMatrices) %>%
+      lapply(function(sublist) {
+        abind(sublist, along = 3)
+      })
+
+    combined_list <- lapply(seq_len(dim(matrices_array)[3]), function(i) {
+      list(
+        original_matrix = matrices_array[,,i],  # Extract the i-th matrix from the 3D array
+        associated_array = rand_array[[i]]  # Get the corresponding processed array from the list
+      )
+    })
+
+    if("normalised_clustering_coefficient" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
+      norm_clust <- lapply(combined_list, function(item) {
+        normalised_clustering_coefficient(list(item$original_matrix, item$associated_array))
+      }) %>%
+        unlist()
+      global_df$normalised_clustering_coefficient <- norm_clust
+    }
+
+    if("normalised_characteristic_path_length" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
+      norm_cpl <- lapply(combined_list, function(item) {
+        normalised_characteristic_path_length(list(item$original_matrix, item$associated_array))
+      }) %>%
+        unlist()
+      global_df$normalised_characteristic_path_length <- norm_cpl
+    }
+
+    if( "small_worldness" %in% user_random_metrics){
+      global_df$small_world <- norm_clust/norm_cpl
+    }
+  }
 
   # Add subject identifiers to the data frame
   if(is.null(subject_names)) {

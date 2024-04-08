@@ -10,6 +10,19 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// rewireTwoNetworksCpp
+List rewireTwoNetworksCpp(NumericMatrix originalMatrix, NumericMatrix secondaryMatrix, int initialIter);
+RcppExport SEXP _NetAnalyseR_rewireTwoNetworksCpp(SEXP originalMatrixSEXP, SEXP secondaryMatrixSEXP, SEXP initialIterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type originalMatrix(originalMatrixSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type secondaryMatrix(secondaryMatrixSEXP);
+    Rcpp::traits::input_parameter< int >::type initialIter(initialIterSEXP);
+    rcpp_result_gen = Rcpp::wrap(rewireTwoNetworksCpp(originalMatrix, secondaryMatrix, initialIter));
+    return rcpp_result_gen;
+END_RCPP
+}
 // floydWarshallRcpp
 NumericMatrix floydWarshallRcpp(NumericMatrix inputMatrix);
 RcppExport SEXP _NetAnalyseR_floydWarshallRcpp(SEXP inputMatrixSEXP) {
@@ -21,9 +34,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rewireNetworkCpp
+NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter);
+RcppExport SEXP _NetAnalyseR_rewireNetworkCpp(SEXP RSEXP, SEXP initialIterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type R(RSEXP);
+    Rcpp::traits::input_parameter< int >::type initialIter(initialIterSEXP);
+    rcpp_result_gen = Rcpp::wrap(rewireNetworkCpp(R, initialIter));
+    return rcpp_result_gen;
+END_RCPP
+}
+// generateRewiredMatrices
+std::vector<NumericMatrix> generateRewiredMatrices(NumericMatrix initialMatrix, int n);
+RcppExport SEXP _NetAnalyseR_generateRewiredMatrices(SEXP initialMatrixSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type initialMatrix(initialMatrixSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(generateRewiredMatrices(initialMatrix, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_NetAnalyseR_rewireTwoNetworksCpp", (DL_FUNC) &_NetAnalyseR_rewireTwoNetworksCpp, 3},
     {"_NetAnalyseR_floydWarshallRcpp", (DL_FUNC) &_NetAnalyseR_floydWarshallRcpp, 1},
+    {"_NetAnalyseR_rewireNetworkCpp", (DL_FUNC) &_NetAnalyseR_rewireNetworkCpp, 2},
+    {"_NetAnalyseR_generateRewiredMatrices", (DL_FUNC) &_NetAnalyseR_generateRewiredMatrices, 2},
     {NULL, NULL, 0}
 };
 
