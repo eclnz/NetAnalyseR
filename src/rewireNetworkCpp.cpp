@@ -42,19 +42,19 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
     
     // Edge cases handling
     if (K == 0) {
-//        Rcpp::Rcout << "Network has no connections. Rewiring is not applicable." << std::endl;
+        // Network has no connections. Rewiring is not applicable.
         return R; // Return the original matrix unmodified
     }
     
     if (K == 1) {
-//        Rcpp::Rcout << "Network has only one connection. Rewiring would not alter the structure." << std::endl;
+        // Network has only one connection. Rewiring would not alter the structure.
         return R; // Return the original matrix unmodified
     }
     
     // Calculate network density
     double density = 2 * K / static_cast<double>(n * (n - 1));
     if (density == 1) {
-        Rcpp::Rcout << "Network density is 1. Rewiring is not possible." << std::endl;
+        // Network density is 1. Rewiring is not possible.
         return R; // Return the original matrix unmodified
     }
     
@@ -107,14 +107,15 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
 //' and then continues to rewire the network with 1 iteration for each subsequent step,
 //' saving the state of the matrix after each single rewiring. This process is repeated
 //' until 'n' rewired matrices are generated.
-//'
+//' The output is in the format of a list. If manually using the output in normalised mesures
+//' the output must be converted to an array with `abind::abind(matrix, along = 3)`
 //' @param initialMatrix A numeric matrix representing the initial network's adjacency matrix.
 //' @param n The number of rewired matrices to generate.
 //'
 //' @return A list of 'n' rewired matrices.
 //' @export
 // [[Rcpp::export]]
-std::vector<NumericMatrix> generateRewiredMatrices(NumericMatrix initialMatrix, int n) {
+std::vector<NumericMatrix> generateRewiredMatrices(NumericMatrix initialMatrix, int n = 100) {
     // Vector to hold the matrices
     std::vector<NumericMatrix> matrices;
     

@@ -24,10 +24,17 @@ for multiple subjects. It validates the requested global metrics against a list 
 about invalid metrics, and computes the specified metrics for each subject's brain network.
 }
 \examples{
-W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
-matrices_array <- array(W, dim = c(3, 3, 1))
-global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
+W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
+valid_global_metrics <- c("characteristic_path_length",
+                          "global_clustering_coefficient_wei",
+                          "global_efficiency_wei",
+                          "inter_node",
+                          "intra_node",
+                          "network_density",
+                          "normalised_clustering_coefficient",
+                          "normalised_characteristic_path_length",
+                          "small_worldness")
 subject_names <- c("Subject1")
-global_df <- compute_global_metrics(matrices_array, global_metrics, subject_names)
+global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
 
 }

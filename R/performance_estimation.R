@@ -75,8 +75,8 @@ array_process <- function(functions, mat_array){
 prediction_estimate <- function(mat_array, model) {
   # Create a data frame for prediction
   predict_df <- data.frame(
-    Size = apply(mat_array, MARGIN = if(is.matrix(mat_array)) 1 else 3, FUN = nrow),
-    MeanDensity = apply(mat_array, MARGIN = if(is.matrix(mat_array)) 1 else 3, FUN = network_density)
+    Size = apply(mat_array, MARGIN = 3, FUN = nrow),
+    MeanDensity = apply(mat_array, 3, FUN = network_density)
   )
 
   # Predict the duration using the model
@@ -128,6 +128,9 @@ calculate_metric_duration <- function(metric_name, matrices_array, user_benchmar
     global_efficiency_wei = "\t\t\t",
     global_clustering_coefficient_wei = "\t",
     characteristic_path_length = "\t\t",
+    normalised_characteristic_path_length = "\t",
+    normalised_clustering_coefficient = "\t",
+
     # Add more metrics as needed
     default = "\t\t\t" # Default tab spacing
   )
@@ -142,12 +145,16 @@ calculate_metric_duration <- function(metric_name, matrices_array, user_benchmar
 estimate_total_duration <- function(matrices_array, user_benchmark, valid_user_metrics) {
 
   metrics_info <- list(
-    valid_user_metrics = c("global_efficiency_wei", "global_clustering_coefficient_wei", "characteristic_path_length", "local_efficiency_wei"),
+    # Metrics which should have their duration estimated
+    valid_user_metrics = c("global_efficiency_wei", "global_clustering_coefficient_wei", "characteristic_path_length", "local_efficiency_wei", "normalised_characteristic_path_length","normalised_clustering_coefficient"),
+    # Specifying the models for the valid metrics.
     model_file = c(global_efficiency_wei = "global_efficiency_execution_time_model.rds",
                    local_efficiency_wei = "local_efficiency_execution_time_model.rds",
                    local_clustering_coefficient_wei = "local_clustering_coefficient_execution_time_model.rds",
                    global_clustering_coefficient_wei = "global_clustering_execution_time_model.rds",
-                   characteristic_path_length = "characteristic_path_length_execution_time_model.rds")
+                   characteristic_path_length = "characteristic_path_length_execution_time_model.rds",
+                   normalised_characteristic_path_length = "normalised_characteristic_path_length_execution_time_model.rds",
+                   normalised_clustering_coefficient = "normalised_clustering_coefficient_execution_time_model.rds")
   )
   total_time <- 0
   cat(paste("\nTime To Compute"))
@@ -168,6 +175,5 @@ estimate_total_duration <- function(matrices_array, user_benchmark, valid_user_m
   if(total_time > 60*60){
     cat(paste("\n\nTime to compute is greater than 1 hour, consider thresholding matrices to decrease density and processing time."))
   }
-  return(total_time)
 }
 

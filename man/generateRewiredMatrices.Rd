@@ -4,7 +4,7 @@
 \alias{generateRewiredMatrices}
 \title{Generate a Series of Rewired Matrices}
 \usage{
-generateRewiredMatrices(initialMatrix, n)
+generateRewiredMatrices(initialMatrix, n = 100L)
 }
 \arguments{
 \item{initialMatrix}{A numeric matrix representing the initial network's adjacency matrix.}
@@ -19,4 +19,6 @@ Starts with an initial network matrix, performs an initial 100 edge rewirings,
 and then continues to rewire the network with 1 iteration for each subsequent step,
 saving the state of the matrix after each single rewiring. This process is repeated
 until 'n' rewired matrices are generated.
+The output is in the format of a list. If manually using the output in normalised mesures
+the output must be converted to an array with \code{abind::abind(matrix, along = 3)}
 }
