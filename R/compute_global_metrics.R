@@ -13,17 +13,34 @@
 #' to a subject and columns for the subject identifier and the calculated metric values.
 #'
 #' @examples
+<<<<<<< HEAD
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' matrices_array <- array(W, dim = c(3, 3, 1))
 #' global_metrics <- c("characteristic_path_length", "global_efficiency_wei, ")
+=======
+#' W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
+#' valid_global_metrics <- c("characteristic_path_length",
+#'                           "global_clustering_coefficient_wei",
+#'                           "global_efficiency_wei",
+#'                           "inter_node",
+#'                           "intra_node",
+#'                           "network_density",
+#'                           "normalised_clustering_coefficient",
+#'                           "normalised_characteristic_path_length",
+#'                           "small_worldness")
+>>>>>>> f4425e4 (Normalised Metrics)
 #' subject_names <- c("Subject1")
-#' global_df <- compute_global_metrics(matrices_array, global_metrics, subject_names)
+#' global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
 #'
 #' @importFrom dplyr select
 #' @importFrom abind abind
 #' @export
 
 compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
+  # If the user submits a single matrix the dimensions of the matrix as an array must be set.
+  if(is.na(dim(matrices_array)[3])){
+    dim(matrices_array)[3] <- 1
+  }
 
   if(!is.array(matrices_array)){
     stop("Matrices array is not in array format")
