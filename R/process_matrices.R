@@ -26,13 +26,15 @@
 #'
 #' @export
 #'
-process_matrices <- function(directory, subjects_specified, file_convention) {
+process_matrices <- function(directory, subjects_specified=NULL, file_convention) {
   # Check if the specified directory exists
   if (!dir.exists(directory)) {
     stop("Directory does not exist: ", directory)
   }
-  if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
-    stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
+  if(!is.null(subjects_specified)){
+    if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
+      stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
+    }
   }
   if (is.character(file_convention)!=TRUE){
     stop("File convention must be supplied as a character: ", file_convention)

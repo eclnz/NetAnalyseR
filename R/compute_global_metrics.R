@@ -49,16 +49,16 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   }
   # Define valid global metrics
   valid_global_metrics <- c("characteristic_path_length", "global_clustering_coefficient_wei", "global_efficiency_wei", "inter_node", "intra_node", "missing_weights", "network_density", "normalised_clustering_coefficient", "normalised_characteristic_path_length", "small_worldness")
-  if("small_worldness" %in% valid_global_metrics )
+  valid_user_metrics <- global_metrics[global_metrics %in% valid_global_metrics]
   # Identify any specified metrics that are not valid
   invalid_metrics <- global_metrics[!global_metrics %in% valid_global_metrics]
+  random_metrics <- c("normalised_clustering_coefficient", "normalised_characteristic_path_length", "small_worldness")
+  user_non_random_metrics <- valid_user_metrics[!valid_user_metrics %in% random_metrics]
+  user_random_metrics <-valid_user_metrics[valid_user_metrics %in% random_metrics]
   if (length(invalid_metrics) > 0) {
     warning("The following global metrics are invalid: \n - ",
             paste0(invalid_metrics, collapse = ", \n - "))
   }
-
-  # Filter for valid metrics specified by the user
-  valid_user_metrics <- global_metrics[global_metrics %in% valid_global_metrics]
   if (length(valid_user_metrics) == 0) {
     stop("\nNo valid global metrics were specified. Please use any of the following global metrics:\n - ",
          paste0(valid_global_metrics, collapse = ", \n - "))
@@ -67,6 +67,13 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   if (length(valid_user_metrics) > 0 & length(invalid_metrics) > 0) {
     warning("The following global metrics can be used:\n - ",
             paste0(valid_global_metrics, collapse = ", \n - "))
+  }
+
+  # Warn if both valid and invalid metrics were specified
+  if (any(apply(matrices_array, MARGIN= 3, FUN = network_density) == 1)) {
+    warning("Network density is 1 in some networks. Random Networks cannot be created and random metrics will not be computed")
+    user_random_metrics <- character(0)
+
   }
 
   # # Calculate Processing Time
@@ -81,13 +88,10 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
       user_benchmark <- benchmark_performance()
     }
   }
-  random_metrics <- c("normalised_clustering_coefficient", "normalised_characteristic_path_length", "small_worldness")
-  user_non_random_metrics <- valid_user_metrics[!valid_user_metrics %in% random_metrics]
-  user_random_metrics <-valid_user_metrics[valid_user_metrics %in% random_metrics]
 
   estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 
-  if(!is.null(user_non_random_metrics)){
+  if(length(user_non_random_metrics)>0){
     global <- lapply(user_non_random_metrics, function(metric_function) {
       apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
       })
