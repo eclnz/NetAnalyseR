@@ -124,9 +124,11 @@ calculate_metric_duration <- function(metric_name, matrices_array, user_benchmar
   }
   duration <- round(duration,2)
   duration_time <- convert_seconds_to_hms(as.numeric(duration))
+  # Setting the spacing for the execution time estimate output.
   tab_spacings <- list(
     global_efficiency_wei = "\t\t\t",
     global_clustering_coefficient_wei = "\t",
+    local_clustering_coefficient_wei = "\t",
     characteristic_path_length = "\t\t",
     normalised_characteristic_path_length = "\t",
     normalised_clustering_coefficient = "\t",
@@ -146,7 +148,7 @@ estimate_total_duration <- function(matrices_array, user_benchmark, valid_user_m
 
   metrics_info <- list(
     # Metrics which should have their duration estimated
-    valid_user_metrics = c("global_efficiency_wei", "global_clustering_coefficient_wei", "characteristic_path_length", "local_efficiency_wei", "normalised_characteristic_path_length","normalised_clustering_coefficient"),
+    valid_user_metrics = c("global_efficiency_wei", "global_clustering_coefficient_wei", "characteristic_path_length", "local_efficiency_wei", "local_clustering_coefficient_wei", "normalised_characteristic_path_length","normalised_clustering_coefficient"),
     # Specifying the models for the valid metrics.
     model_file = c(global_efficiency_wei = "global_efficiency_execution_time_model.rds",
                    local_efficiency_wei = "local_efficiency_execution_time_model.rds",
