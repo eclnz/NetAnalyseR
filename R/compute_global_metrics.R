@@ -13,11 +13,6 @@
 #' to a subject and columns for the subject identifier and the calculated metric values.
 #'
 #' @examples
-<<<<<<< HEAD
-#' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
-#' matrices_array <- array(W, dim = c(3, 3, 1))
-#' global_metrics <- c("characteristic_path_length", "global_efficiency_wei, ")
-=======
 #' W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' valid_global_metrics <- c("characteristic_path_length",
 #'                           "global_clustering_coefficient_wei",
@@ -28,7 +23,6 @@
 #'                           "normalised_clustering_coefficient",
 #'                           "normalised_characteristic_path_length",
 #'                           "small_worldness")
->>>>>>> f4425e4 (Normalised Metrics)
 #' subject_names <- c("Subject1")
 #' global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
 #'
@@ -67,7 +61,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   # Filter for valid metrics specified by the user
   valid_user_metrics <- global_metrics[global_metrics %in% valid_global_metrics]
   if (length(valid_user_metrics) == 0) {
-    stop("No valid global metrics were specified. Please use any of the following global metrics:\n - ",
+    stop("\nNo valid global metrics were specified. Please use any of the following global metrics:\n - ",
          paste0(valid_global_metrics, collapse = ", \n - "))
   }
   # Warn if both valid and invalid metrics were specified
@@ -104,7 +98,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
   global_df <- data.frame(lapply(global, as.numeric))
   colnames(global_df) <- user_non_random_metrics
 
-  if(!is.null(user_random_metrics)){
+  if(length(user_random_metrics)>0){
 
     rand_array <- apply(matrices_array, MARGIN = 3, generateRewiredMatrices) %>%
       lapply(function(sublist) {
