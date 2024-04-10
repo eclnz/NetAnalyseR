@@ -25,7 +25,6 @@
 #'                           "small_worldness")
 #' subject_names <- c("Subject1")
 #' global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
-#'
 #' @importFrom dplyr select
 #' @importFrom abind abind
 #' @export
