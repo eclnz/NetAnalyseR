@@ -9,19 +9,12 @@
 #' @return A numeric vector containing the weights of self-connections for each node in the network.
 #' @examples
 #' # Create a 3x3 matrix with self-connections
-#' W <- matrix(c(1, 2, 3,
-#'               4, 5, 6,
-#'               7, 8, 9), byrow = TRUE, nrow = 3)
+#' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' self_connectivity(W)
-#'
 #' @export
-#'
 self_connectivity <- function(W) {
-  W <- validate_matrix(W) # Ensure the matrix is valid for analysis
-
-  # Directly return the diagonal of the matrix, which represents self-connections
+  validate_matrix(W) # Ensure the matrix is valid for analysis
   # Each element on the diagonal is the weight of the self-connection for that node
   self_connections_weights <- diag(W)
-
   return(self_connections_weights)
 }

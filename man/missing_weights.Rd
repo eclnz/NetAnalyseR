@@ -23,6 +23,5 @@ weights from the total.
 }
 \examples{
 # Example matrix representing weighted connections between nodes
-W <- matrix(c(1, 2, 3, 4, 5, 6, 7, 8, 9), nrow = 3, byrow = TRUE)
-missing_weights(W)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)#' missing_weights(W)
 }
