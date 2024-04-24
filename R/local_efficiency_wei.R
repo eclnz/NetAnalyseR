@@ -18,78 +18,54 @@
 local_efficiency_wei <- function(W) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
   W <- validate_matrix(W)
-
   # Remove self-loops by setting diagonal elements to zero
   diag(W) <- 0
-
   # Determine if there is a connection (edge) between nodes
   isConnected <- W > 0
-
   # Number of nodes in the graph
   numNodes <- nrow(W)
-
   # Conversion factor for cube root
   cubeRootFactor <- 1 / 3
-
   # Convert weights to lengths for distance calculation
   lengths <- length_inversion(W)
-
   # Initialize vector for local efficiencies
   localEfficiencies <- numeric(numNodes)
-
   # Calculate cube root of weights and lengths for harmonic mean calculation
   cubeRootWeights <- W ^ cubeRootFactor
   cubeRootLengths <- lengths ^ cubeRootFactor
-
   # Ensure diagonal elements of cube root lengths are zero
   diag(cubeRootLengths) <- 0
-
   for (node in 1:numNodes) {
     # Identify neighbors of the current node
     neighbors <- which(isConnected[node, ] | isConnected[, node])
-
     # Nodes with one or less neighbors have an efficiency of zero.
     if (length(neighbors) <= 1) {
       localEfficiencies[node] <- 0
       next
     }
-
-    # Subgraph weights for neighbors
+    # Subgraph weights for neighbors, using cube root weights to calculate subgraph
     subgraphWeights <- (as.matrix(cubeRootWeights[node, neighbors] + cubeRootWeights[neighbors, node]))
-
-    # Subgraph lengths for neighbors
-    subgraphLengths <- lengths[neighbors, neighbors]
-
-    # Nodes who's neighbors are not connected to each other have an efficiency of zero
-    if (max(subgraphLengths) == 0) {
-      localEfficiencies[node] <- 0
-      next
-    }
-
-    # Calculate distance matrix for the subgraph
+    # Subgraph lengths for neighbors, now using cube root lengths similar to `local_efficiency`
+    subgraphLengths <- cubeRootLengths[neighbors, neighbors]
+    # Calculate distance matrix for the subgraph using floydWarshallRcpp, mirroring `local_efficiency` logic
     distances <- 1 / floydWarshallRcpp(subgraphLengths)
-
-    # Symmetric efficiency matrix for the subgraph
+    # Symmetric efficiency matrix for the subgraph, derived from distances
     efficiencyMatrix <- distances + t(distances)
-
-    # Pre-sum matrix for numerator calculation
+    # Pre-sum matrix for numerator calculation, combining weights and efficiency
     preSumMatrix <- ((subgraphWeights %*% t(subgraphWeights)) * efficiencyMatrix)
-
-    # Numerator: sum of pre-sum matrix elements, halved and finite
+    # Numerator: sum of pre-sum matrix elements, halved and ensuring finite values
     numerator <- sum(preSumMatrix[is.finite(preSumMatrix)], na.rm = TRUE) / 2
-
     if (numerator != 0) {
-      # Sum of adjacency values for normalization
+      # Sum of adjacency values for normalization, reflecting connectivity
       adjacencySums <- isConnected[node, neighbors] + isConnected[neighbors, node]
-
-      # Denominator for efficiency calculation
+      # Denominator for efficiency calculation, based on connectivity sums
       denominator <- sum(adjacencySums)^2 - sum(adjacencySums^2)
-
       # Calculate and assign local efficiency
       localEfficiencies[node] <- numerator / denominator
     }
-
   }
   # Return the vector of local efficiencies for each node
   return(localEfficiencies)
 }
+
+

@@ -8,18 +8,12 @@
 #' @return A numeric vector containing the strength of each node.
 #' @examples
 #' # Create a 3x3 undirected, weighted connection matrix
-#' W <- matrix(c(0, 2, 1,
-#'               2, 0, 3,
-#'               1, 3, 0), nrow = 3, byrow = TRUE)
+#' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' node_strength(W)
 #' @export
 node_strength <- function(W) {
-  W <- validate_matrix(W) # Validate the input matrix to ensure it's appropriate for calculations
+  validate_matrix(W) # Validate the input matrix to ensure it's appropriate for calculations
   diag(W) <- 0 # Remove self-loops by setting the diagonal elements to zero
-
-  # Calculate node strength as the sum of weights of links connected to the node.
-  # For an undirected network, column sums and row sums are equivalent.
   node_strength <- colSums(W)
-
   return(node_strength)
 }

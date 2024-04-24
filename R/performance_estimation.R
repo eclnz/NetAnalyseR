@@ -1,24 +1,32 @@
 #' @keywords internal
 #' @importFrom stats rnorm
 mat_gen <- function(dim){
-  mat <- matrix(abs(rnorm(dim*dim, 0, 100)),nrow = dim, ncol=dim,)
-  mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
+  mat <- matrix(abs(rnorm(dim*dim, 0, 100)),nrow = dim, ncol=dim)
+  mat <- (mat + t(mat)) / 2
   return(mat)
 }
 
 #' @keywords internal
-mat_threshold <- function(mat, threshold){
-  return(as.numeric(mat>threshold) * mat)
+mat_threshold <- function(mat, threshold) {
+  (mat > threshold) * mat
 }
 
+
 #' @keywords internal
-mat_array_gen <- function(dim,length, threshold = 0){
-  mat_array <- array(dim = c(dim,dim,length))
+mat_array_gen <- function(dim, length, threshold = 0){
+  mat_array <- array(dim = c(dim, dim, length))
   for(i in 1:length){
-    mat_array[,,i] <- mat_threshold(mat_gen(dim),threshold)
+    # Generate a symmetric matrix
+    mat <- mat_gen(dim)
+    # Apply threshold while ensuring symmetry is maintained
+    mat <- mat_threshold(mat, threshold)
+    # Double-checking and enforcing symmetry (theoretically redundant but added for diagnostic purposes)
+    mat <- (mat + t(mat)) / 2
+    mat_array[,,i] <- mat
   }
   return(mat_array)
 }
+
 
 #' @title Quantifies user thread speed
 #' @description This function benchmarks the performance of a network analysis function

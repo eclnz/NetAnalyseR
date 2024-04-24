@@ -4,7 +4,7 @@
 \alias{process_matrices}
 \title{Process and analyse matrices from files within a directory}
 \usage{
-process_matrices(directory, subjects_specified, file_convention)
+process_matrices(directory, subjects_specified = NULL, file_convention)
 }
 \arguments{
 \item{directory}{The path to the directory containing the matrix files.}

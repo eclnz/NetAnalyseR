@@ -7,10 +7,8 @@
 #' @param W A matrix to validate.
 #' @return Returns a valid symmetric square numeric matrix.
 #' If the matrix fails any validation checks, the function stops with an appropriate error message.
-#' @keywords internal
 #'
-validate_matrix <- function(W, skip = FALSE) {
-
+validate_matrix <- function(W) {
   # Check if input is a matrix
   if (!is.matrix(W)) {stop("Input must be a matrix.")}
 
@@ -21,7 +19,7 @@ validate_matrix <- function(W, skip = FALSE) {
   if (any(is.na(W))) {stop("Matrix contains NA values, which are not allowed.")}
 
   # Check for empty matrix
-  # if (max(W)==0) {stop("Matrix must have values greater than zero.")}
+  if (max(W)==0) {stop("Matrix must have values greater than zero.")}
 
   # Check if the matrix is square
   if (nrow(W) != ncol(W)) {stop("Matrix W must be square.")}

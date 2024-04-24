@@ -20,9 +20,6 @@ the diagonal of the input matrix, which represents these self-connections.
 }
 \examples{
 # Create a 3x3 matrix with self-connections
-W <- matrix(c(1, 2, 3,
-              4, 5, 6,
-              7, 8, 9), byrow = TRUE, nrow = 3)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 self_connectivity(W)
-
 }

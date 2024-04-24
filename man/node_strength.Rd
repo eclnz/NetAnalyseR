@@ -19,8 +19,6 @@ defined as the sum of weights of edges connected to each node.
 }
 \examples{
 # Create a 3x3 undirected, weighted connection matrix
-W <- matrix(c(0, 2, 1,
-              2, 0, 3,
-              1, 3, 0), nrow = 3, byrow = TRUE)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 node_strength(W)
 }
