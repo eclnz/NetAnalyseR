@@ -17,14 +17,8 @@
 global_clustering_coefficient_wei <- function(W) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
   validate_matrix(W) # Check if matrix is valid
-
   # Remove self-loops by setting diagonal elements to zero
-  diag(W) <- 0
-
-  # Calculate the mean of local clustering coefficients for all nodes in the graph
-  # which represents the global clustering coefficient
-  C <- mean(local_clustering_coefficient_wei(W))
-
+  Cl = mean(localClusteringCoefficientWei(W))
   # Return the global clustering coefficient
-  return(C)
+  return(Cl)
 }

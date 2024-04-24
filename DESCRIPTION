@@ -20,6 +20,8 @@ Imports:
     Rcpp,
     tidyr,
     purrr,
-    stringr
+    stringr,
+    RcppArmadillo
 LinkingTo: 
-    Rcpp
+    Rcpp,
+    RcppArmadillo
