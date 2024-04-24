@@ -18,25 +18,9 @@
 #' @export
 local_clustering_coefficient_wei<- function(W) {
   # Ensure W is a valid matrix and convert it to matrix form if necessary
-  W <- validate_matrix(W)
-  W <- as.matrix(W) # Convert to matrix if not already
-  diag(W) <- 0 # Zero out the diagonal to ignore self-loops
-
-  # Compute the cube root of the weights, as per Onnela's formula
-  W_13 <- W ^ (1/3) # Element-wise power for transformation
-
-  # Calculate the numerator of the clustering coefficient (cycle triangles)
-  cyc3 <- diag(W_13 %*% W_13 %*% W_13) # Triadic closure
-
-  # Calculate the degree of each node based on the number of non-zero connections
-  K <- rowSums(W != 0)
-
-  # Adjust degrees for nodes with no triadic closure to avoid division by zero
-  K[cyc3 == 0] <- Inf # Set to Inf, effectively making clustering coefficient 0
-
-  # Compute the local clustering coefficient for each node
-  C <- cyc3 / (K * (K - 1)) # Onnela's clustering coefficient formula
-
+  validate_matrix(W)
+  # Zero out the diagonal to ignore self-loops
+  C <- localClusteringCoefficientWei(W)
   # Return the vector of clustering coefficients
   return(C)
 }

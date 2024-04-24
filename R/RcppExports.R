@@ -24,6 +24,24 @@ floydWarshallRcpp <- function(inputMatrix) {
     .Call(`_NetAnalyseR_floydWarshallRcpp`, inputMatrix)
 }
 
+rewireTwoNetworksCpp <- function(originalMatrix, secondaryMatrix, initialIter) {
+    .Call(`_NetAnalyseR_rewireTwoNetworksCpp`, originalMatrix, secondaryMatrix, initialIter)
+}
+
+#' @keywords internal
+NULL
+
+localClusteringCoefficientWei <- function(W_original) {
+    .Call(`_NetAnalyseR_localClusteringCoefficientWei`, W_original)
+}
+
+#' @export
+NULL
+
+localEfficiencyWei <- function(W_original) {
+    .Call(`_NetAnalyseR_localEfficiencyWei`, W_original)
+}
+
 #' Rewire a Network Matrix
 #'
 #' This function takes a network represented as an adjacency matrix and
