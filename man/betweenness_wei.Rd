@@ -4,10 +4,10 @@
 \alias{betweenness_wei}
 \title{Calculate Betweenness Centrality for Weighted Networks}
 \usage{
-betweenness_wei(G)
+betweenness_wei(W)
 }
 \arguments{
-\item{G}{A square numeric matrix representing the weighted network, where higher weights imply stronger connections.}
+\item{W}{A square numeric matrix representing the weighted network, where higher weights imply stronger connections.}
 }
 \value{
 A numeric vector containing the betweenness centrality for each node in the network.
@@ -19,6 +19,6 @@ Nodes with higher betweenness centrality play a more significant role in the com
 The function assumes that a zero in the matrix represents no connection and infinities represent disconnected paths.
 }
 \examples{
-G<- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
-betweenness_wei(G)
+W<- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
+betweenness_wei(W)
 }
