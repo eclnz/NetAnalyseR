@@ -22,6 +22,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// calculateBetweennessCentrality
+NumericVector calculateBetweennessCentrality(const NumericMatrix& D, const NumericMatrix& NP);
+RcppExport SEXP _NetAnalyseR_calculateBetweennessCentrality(SEXP DSEXP, SEXP NPSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type NP(NPSEXP);
+    rcpp_result_gen = Rcpp::wrap(calculateBetweennessCentrality(D, NP));
+    return rcpp_result_gen;
+END_RCPP
+}
+// dijkstraAllPairs
+NumericMatrix dijkstraAllPairs(const NumericMatrix& matrix);
+RcppExport SEXP _NetAnalyseR_dijkstraAllPairs(SEXP matrixSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type matrix(matrixSEXP);
+    rcpp_result_gen = Rcpp::wrap(dijkstraAllPairs(matrix));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rewireTwoNetworksCpp
 List rewireTwoNetworksCpp(NumericMatrix originalMatrix, NumericMatrix secondaryMatrix, int initialIter);
 RcppExport SEXP _NetAnalyseR_rewireTwoNetworksCpp(SEXP originalMatrixSEXP, SEXP secondaryMatrixSEXP, SEXP initialIterSEXP) {
@@ -81,26 +104,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// validateMatrix
-arma::mat validateMatrix(const arma::mat& W);
-RcppExport SEXP _NetAnalyseR_validateMatrix(SEXP WSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::mat& >::type W(WSEXP);
-    rcpp_result_gen = Rcpp::wrap(validateMatrix(W));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_NetAnalyseR_floydWarshallRcpp", (DL_FUNC) &_NetAnalyseR_floydWarshallRcpp, 1},
+    {"_NetAnalyseR_calculateBetweennessCentrality", (DL_FUNC) &_NetAnalyseR_calculateBetweennessCentrality, 2},
+    {"_NetAnalyseR_dijkstraAllPairs", (DL_FUNC) &_NetAnalyseR_dijkstraAllPairs, 1},
     {"_NetAnalyseR_rewireTwoNetworksCpp", (DL_FUNC) &_NetAnalyseR_rewireTwoNetworksCpp, 3},
     {"_NetAnalyseR_localClusteringCoefficientWei", (DL_FUNC) &_NetAnalyseR_localClusteringCoefficientWei, 1},
     {"_NetAnalyseR_localEfficiencyWei", (DL_FUNC) &_NetAnalyseR_localEfficiencyWei, 1},
     {"_NetAnalyseR_rewireNetworkCpp", (DL_FUNC) &_NetAnalyseR_rewireNetworkCpp, 2},
     {"_NetAnalyseR_generateRewiredMatrices", (DL_FUNC) &_NetAnalyseR_generateRewiredMatrices, 2},
-    {"_NetAnalyseR_validateMatrix", (DL_FUNC) &_NetAnalyseR_validateMatrix, 1},
     {NULL, NULL, 0}
 };
 

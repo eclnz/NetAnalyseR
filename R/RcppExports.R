@@ -20,6 +20,14 @@ floydWarshallRcpp <- function(inputMatrix) {
     .Call(`_NetAnalyseR_floydWarshallRcpp`, inputMatrix)
 }
 
+calculateBetweennessCentrality <- function(D, NP) {
+    .Call(`_NetAnalyseR_calculateBetweennessCentrality`, D, NP)
+}
+
+dijkstraAllPairs <- function(matrix) {
+    .Call(`_NetAnalyseR_dijkstraAllPairs`, matrix)
+}
+
 rewireTwoNetworksCpp <- function(originalMatrix, secondaryMatrix, initialIter) {
     .Call(`_NetAnalyseR_rewireTwoNetworksCpp`, originalMatrix, secondaryMatrix, initialIter)
 }
@@ -68,12 +76,5 @@ rewireNetworkCpp <- function(R, initialIter) {
 #' @export
 generateRewiredMatrices <- function(initialMatrix, n = 100L) {
     .Call(`_NetAnalyseR_generateRewiredMatrices`, initialMatrix, n)
-}
-
-#' @keywords internal
-NULL
-
-validateMatrix <- function(W) {
-    .Call(`_NetAnalyseR_validateMatrix`, W)
 }
 
