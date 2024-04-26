@@ -8,10 +8,10 @@ An R package for producing graph theory metrics and other metrics from networks 
 -   [Usage](#usage)
 -   [Features](#features)
 -   [Contributing](#contributing)
--   [License](#license)
+-   [License](#licence)
 -   [Credits](#credits)
 
-## Installation {#installation}
+## Installation
 
 The package devtools must first be installed:
 
@@ -21,28 +21,37 @@ devtools::install_github("eclnz/NetAnalyseR")
 library(NetAnalyseR)
 ```
 
-## Usage {#usage}
+## Usage
 
 ```{R}
 library(NetAnalyseR)
 library(magrittr)
 library(ggplot2)
+
 # Set directory where adjacencey matrices are located. Location of exemplar matrices below. 
 data_dir <- system.file("extdata", package = "NetAnalyseR")
+
 # Set names of all subjects you wish to analyse. 
 subjects <- c("A", "B", "C", "D")
+
 # The file naming convention of these files. This is any characters following the name. 
 file_convention <- ".csv"
-# Initial import of matrices into matrix array and edge data frame
+
+# Initial import of matrices into matrix array and edge data frame.
 output <- process_matrices(data_dir, subjects, file_convention)
+
+# Specify network metrics of interest.
 global_metrics <- c("characteristic_path_length","network_density")
 nodal_metrics <- c("node_strength", "local_efficiency_wei")
+
 # Compute specified global metrics and allocate groups
 global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects) %>% 
   allocate_groups(list(control = c("A","B"), case = c("C", "D")))
+
 # Compute specified nodal metrics and allocate groups
 nodal_df <- compute_nodal_metrics(output$matrices, nodal_metrics, output$subjects) %>% 
   allocate_groups(list(control = c("A","B"), case = c("C", "D")))
+
 # Allocate edges to groups
 edge_df <- classify_connections(output$edge_df, cortical_allocation = c(1,2), subcortical_allocation = c(3,4))
 
@@ -63,11 +72,11 @@ edge_df %>%
 
 ```
 
-## Features {#features}
+## Features 
 
 -   Import adjacency matrices
 
-## Contributing {#contributing}
+## Contributing
 
 Add the package folder
 
@@ -87,6 +96,6 @@ document()
 
 This project is licensed under the GNU General Public License. See the LICENSE file for details.
 
-## Credits {#credits}
+## Credits
 
 -   The logic from many functions were translated from code in the Brain Connectivity Toolbox (<https://sites.google.com/site/bctnet/>)
