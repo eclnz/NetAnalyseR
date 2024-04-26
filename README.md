@@ -8,10 +8,10 @@ An R package for producing graph theory metrics and other metrics from networks 
 -   [Usage](#usage)
 -   [Features](#features)
 -   [Contributing](#contributing)
--   [License](#license)
+-   [License](#licence)
 -   [Credits](#credits)
 
-## Installation {#installation}
+## Installation
 
 The package devtools must first be installed:
 
@@ -21,7 +21,7 @@ devtools::install_github("eclnz/NetAnalyseR")
 library(NetAnalyseR)
 ```
 
-## Usage {#usage}
+## Usage
 
 ```{R}
 library(NetAnalyseR)
@@ -63,11 +63,11 @@ edge_df %>%
 
 ```
 
-## Features {#features}
+## Features 
 
 -   Import adjacency matrices
 
-## Contributing {#contributing}
+## Contributing
 
 Add the package folder
 
@@ -87,6 +87,6 @@ document()
 
 This project is licensed under the GNU General Public License. See the LICENSE file for details.
 
-## Credits {#credits}
+## Credits
 
 -   The logic from many functions were translated from code in the Brain Connectivity Toolbox (<https://sites.google.com/site/bctnet/>)
