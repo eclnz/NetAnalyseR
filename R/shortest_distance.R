@@ -27,8 +27,11 @@ shortest_distance <- function(L) {
   # Initialize the distance matrix and set diagonal distances to zero
   diag(L) <- 0 # Self-distances are always zero
 
-  # Compute shortest distance with Floyd Warshall Algorithm in C++ call
-  D <- floydWarshallRcpp(L)
-
+  # Depending on network characteristics calculate shortest distance differently.
+  if(network_density(L)>0.55){
+    D <- floydWarshallRcpp(L) # When Network Density is high, FloydWarshall algorithm is faster.
+  } else {
+    D <- dijkstraAllPairs(L) # When Network Density is low, dijkstraAllPairs is faster.
+  }
   return(D)
 }
