@@ -21,7 +21,9 @@ Imports:
     tidyr,
     purrr,
     stringr,
-    tidyselect
+    tidyselect,
+    broom,
+    ggplot2
 LinkingTo: 
     Rcpp,
     RcppArmadillo
