@@ -21,7 +21,8 @@ Imports:
     tidyr,
     purrr,
     stringr,
-    tidyselect
+    tidyselect,
+    broom
 LinkingTo: 
     Rcpp,
     RcppArmadillo
