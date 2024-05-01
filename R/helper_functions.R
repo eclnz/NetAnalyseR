@@ -56,3 +56,19 @@ allocate_groups <- function(data_frame, grouping_list) {
       found_group
     }))
 }
+
+
+#' @title Generate a Warning Once
+#' @description This function generates a specified warning message only once during the R session.
+#' @param warning_var_name A string representing the name of the variable used to track whether the warning has been issued.
+#' @param warning_message A string containing the warning message to be displayed.
+#' @return No return value; the function solely issues a warning and updates the global environment.
+#' @examples
+#' generate_warning_once("warned_about_issue", "Attention: Specific issue has occurred!")
+#' @keywords internal
+generate_warning <- function(warning_var_name, warning_message) {
+  if (!get(warning_var_name, envir = .GlobalEnv)) {
+    warning(warning_message)
+    assign(warning_var_name, TRUE, envir = .GlobalEnv)
+  }
+}
