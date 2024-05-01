@@ -22,7 +22,8 @@ Imports:
     purrr,
     stringr,
     tidyselect,
-    broom
+    broom,
+    ggplot2
 LinkingTo: 
     Rcpp,
     RcppArmadillo
