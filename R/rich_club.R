@@ -59,11 +59,10 @@ norm_rich_club <- function(W, n_rand=100, rand_array = NULL){
   rand_rich <- apply(rand_array, FUN = rich_club, MARGIN = 3)
   # rand_rich[is.na(rand_rich)] <- Inf
 
-  num_exceeding <- rowSums(as.matrix(rand_rich>rich)+0)
+  num_exceeding <- rowSums(as.matrix(rand_rich>=rich)+0)
   rand_rich_sum <- apply(rand_rich, FUN = mean, MARGIN = 1)
   p_value = num_exceeding/n_rand
   norm_rich = rich/rand_rich_sum
-
 
   list(rich_club = rich/rand_rich_sum, p_value = p_value, node = 1:length(rich) )
 
