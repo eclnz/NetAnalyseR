@@ -4,7 +4,12 @@
 \alias{process_matrices}
 \title{Process and analyse matrices from files within a directory}
 \usage{
-process_matrices(directory, subjects_specified = NULL, file_convention)
+process_matrices(
+  directory,
+  subjects_specified = NULL,
+  file_convention,
+  output_edge = FALSE
+)
 }
 \arguments{
 \item{directory}{The path to the directory containing the matrix files.}
@@ -12,6 +17,8 @@ process_matrices(directory, subjects_specified = NULL, file_convention)
 \item{subjects_specified}{A vector of subject identifiers to be processed.}
 
 \item{file_convention}{The naming convention for the matrix files related to each subject.}
+
+\item{output_edge}{A boolean whether to calculate and output a dataframe containing the edge strengths of all connections in all networks.}
 }
 \value{
 A list containing three elements: 'edge_df' which is a dataframe of edge strengths between lower
