@@ -7,6 +7,7 @@
 #' @param directory The path to the directory containing the matrix files.
 #' @param subjects_specified A vector of subject identifiers to be processed.
 #' @param file_convention The naming convention for the matrix files related to each subject.
+#' @param output_edge A boolean whether to calculate and output a dataframe containing the edge strengths of all connections in all networks.
 #'
 #' @return A list containing three elements: 'edge_df' which is a dataframe of edge strengths between lower
 #'   triangular matrix elements across all subjects, 'matrices' which is a 3D array of matrices,
@@ -26,16 +27,20 @@
 #'
 #' @export
 #'
-process_matrices <- function(directory, subjects_specified=NULL, file_convention) {
+process_matrices <- function(directory, subjects_specified=NULL, file_convention, output_edge = FALSE) {
   # Check if the specified directory exists
   if (!dir.exists(directory)) {
     stop("Directory does not exist: ", directory)
   }
-  if(!is.null(subjects_specified)){
-    if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
-      stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
-    }
+  if(is.null(subjects_specified)){
+    subjects_specified <- unique(list.files(directory, recursive=FALSE))
+  } else{
+    subjects_specified <- paste0(subjects_specified,file_convention)
   }
+  if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
+      stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
+  }
+
   if (is.character(file_convention)!=TRUE){
     stop("File convention must be supplied as a character: ", file_convention)
   }
@@ -49,10 +54,12 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
   matrices_list <- list()
   expected_dims <- NULL
 
+  subjectDirs <- unique(list.files(directory, recursive=FALSE))
+
   # Iterate over subjects to process their matrices
   for (subj in subjects_specified) {
     # Construct file path from directory, subject ID, and file convention
-    file_path <- file.path(directory, paste0(subj, file_convention))
+    file_path <- file.path(directory, subj)
 
     if (!file.exists(file_path)) {
       warning("Missing file for subject: ", subj)
@@ -101,11 +108,13 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
   matrix_df <- abind(matrices_list, along = 3)
 
   # Combine individual subject edge dataframes into one
-  edge_df <- do.call(rbind, edge_df_list) %>%
-    dplyr::mutate(self_connectivity = ifelse(row == col, "Self-Connected", "Network-Connected"))
+  if (output_edge==TRUE){
+    edge_df <- do.call(rbind, edge_df_list) %>%
+      dplyr::mutate(self_connectivity = ifelse(row == col, "Self-Connected", "Network-Connected"))
+    return(list(matrices = matrix_df, subjects = subjects_present, edge_df = edge_df))
+    }
 
-  # Return the results
-  return(list(edge_df = edge_df, matrices = matrix_df, subjects = subjects_present ))
+  return(list(matrices = matrix_df, subjects = subjects_present))
 }
 
 
