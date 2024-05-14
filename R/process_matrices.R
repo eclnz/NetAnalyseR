@@ -16,9 +16,7 @@
 #'
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' subjects <- c("A", "B", "C", "D")
-#' file_convention <- ".csv"
-#' process_matrices(data_dir, subjects, file_convention)
+#' output <- process_matrices(data_dir, file_convention = "_hcp.csv")
 #'
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
@@ -34,11 +32,12 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
   }
   if(is.null(subjects_specified)){
     subjects_specified <- unique(list.files(directory, recursive=FALSE))
+    subjects_specified <- subjects_specified[grepl(file_convention, subjects_specified)]
   } else{
     subjects_specified <- paste0(subjects_specified,file_convention)
   }
   if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
-      stop("Subjects specified must be supplied as a character or number: ", subjects_specified)
+      stop("If specifying subjects, it must be supplied as a character or number: ", subjects_specified)
   }
 
   if (is.character(file_convention)!=TRUE){
@@ -48,13 +47,14 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
     stop("File convention must have a length of 1: ", file_convention)
   }
 
+  grepl(file_convention, subjects_specified)
+
+
   # Initialize lists to store results
   subjects_present <- c()
   edge_df_list <- list()
   matrices_list <- list()
   expected_dims <- NULL
-
-  subjectDirs <- unique(list.files(directory, recursive=FALSE))
 
   # Iterate over subjects to process their matrices
   for (subj in subjects_specified) {
