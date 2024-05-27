@@ -135,7 +135,10 @@ processFSdata <- function(datasetDir, subject_names = NULL) {
   # Replace "-" with "_" in column names
   names(stats2Table2) <- gsub("-", "_", names(stats2Table2))
   names(stats2Table2) <- gsub(" ", "", names(stats2Table2))
-  rownames(fs_data) <- NULL
+  rownames(stats2Table2) <- NULL
+
+  # Make sure all volume entries in dataframe are numeric
+  stats2Table2[,-1]  <- lapply(stats2Table2[,-1], as.numeric)
 
   return(stats2Table2)
 }
