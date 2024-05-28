@@ -80,20 +80,9 @@ grouping_list<- list(Preseason = "Pre", Postseason = "post")
 #' @param plot A boolean indicating whether to generate plots of the results.
 #' @param permutation A boolean to choose whether permutation tests should be used instead of ANOVA for statistical comparison.
 #' @param n_rand The number of random permutations to use if permutation is TRUE.
+#' @param normalize Whether to compare rich club coefficient or normalised rich club coefficient between groups.
 #' @param p_adj A boolean indicating whether significant differences between groups on the graph should be controlled for multiple comparisons.
 #' @return A list containing statistical analysis results and optionally a plot, depending on the input parameters.
-#' @examples
-#' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' subjects <- c("A", "B", "C", "D")
-#' grouping <- list(AB = c("A" , "B"), CD = c("C", "D"))
-#' file_convention <- ".csv"
-#' output <- process_matrices(data_dir, subjects, file_convention)
-#' compare_rich_club(mat_array = output$matrices,
-#'                   subjects = output$subjects,
-#'                   n_rand = 100,
-#'                   grouping_list = grouping,
-#'                   plot = T)
-#'
 #'
 #'
 #' @importFrom tidyr pivot_longer drop_na
@@ -106,38 +95,70 @@ grouping_list<- list(Preseason = "Pre", Postseason = "post")
 
 compare_rich_club <- function(mat_array,
                               subjects,
+                              normalize = T,
                               grouping_list,
                               plot = FALSE,
                               permutation = FALSE,
                               n_rand = 100,
                               p_adj = TRUE) {
+
+  if (length(subjects) != dim(mat_array)[3]){
+    stop("Subjects specified does not match length of matrices array.")
+  }
+  if (!is.list(grouping_list)) {
+    stop("Input 'grouping_list' must be a list.")
+  }
   subjects <- data.frame(subject = subjects)
 
   # Determining subjects to be analysed from grouping list
   grouped_subjects <- allocate_groups(subjects, grouping_list)
   include_index <- !is.na(grouped_subjects$group)
+  include_subjects <- subjects$subject[include_index]
 
-  if (!is.list(grouping_list)) {
-    stop("Input 'grouping_list' must be a list.")
+  if (all(is.na(grouped_subjects$group))){
+    stop("No subjects allocated to groups specified.")
   }
 
   cat("Calculating Normalised Rich Club\n")
 
-  norm_rich_club <- apply(mat_array[,,include_index], MARGIN = 3, FUN = function(mat) norm_rich_club(mat, n_rand))
+  if(normalize){
+    norm_rich_club <- apply(mat_array[,,include_index], MARGIN = 3, FUN = function(mat) norm_rich_club(mat, n_rand))
+    names(norm_rich_club) <- gsub("\\.", "_", include_subjects)
+    long_rich_club <- as.data.frame(norm_rich_club) %>%
+      pivot_longer(
+        cols = everything(),
+        names_to = c("subject", ".value"),
+        names_pattern = "(.*)\\.(.*)"
+      ) %>%
+      allocate_groups(grouping_list) %>%
+      drop_na()
+  } else {
+    rich_club <- apply(mat_array[,,include_index], MARGIN = 3, FUN = function(mat) rich_club(mat))
+    colnames(rich_club) <- gsub("\\.", "_", include_subjects)
+    long_rich_club <- as.data.frame(rich_club) %>%
+      mutate(node = dplyr::row_number()) %>%
+      pivot_longer(
+        cols = -node,
+        names_to = "subject",
+        values_to = "rich_club"
+      ) %>%
+      allocate_groups(grouping_list) %>%
+      drop_na() %>%
+      mutate(p_value = 0)
+  }
 
-  cat("Formulating Rich Club Data Statistics\n")
-  long_norm_rich_club <- as.data.frame(norm_rich_club) %>%
-    pivot_longer(
-      cols = everything(),
-      names_to = c("subject", ".value"),
-      names_pattern = "(.*)\\.(.*)"
-    ) %>%
-    allocate_groups(grouping_list) %>%
-    drop_na()
+  if (nrow(long_rich_club)<=1){
+    stop("There are not enough nodes with rich club values to be compared between groups.")
+  }
+  if (length(unique(long_rich_club$group))<2){
+    stop("There have been less than 2 groups allocated. Check the allocation list.")
+  }
+
+  cat("Computing Statistics\n")
 
   permute_test <- function(data, n_perm = 100) {
     if (dplyr::n_distinct(data$group) <= 1) {
-      stop("Not enough distinct groups for permutation testing.")
+      return(data.frame(original_statistic = NA, p_value = NA))
     }
     original_data <- data
     original_fit <- tidy(aov(rich_club ~ group, data = original_data))
@@ -157,17 +178,19 @@ compare_rich_club <- function(mat_array,
 
   # Calculate results based on permutation or ANOVA
   results <- if (permutation) {
-    long_norm_rich_club %>%
+    # long_norm_rich_club
+    long_rich_club %>%
       group_by(node) %>%
       dplyr::filter(p_value<0.05) %>%
       dplyr::filter(n_distinct(group) > 1) %>%
       dplyr::filter(n()/n_distinct(group) > 1) %>% # Must be more than 1 observation in each group
-      summarise(perm_results = list(permute_test(pick(rich_club))), .groups = 'drop') %>%
+      summarise(perm_results = list(permute_test(select(., rich_club, node, group))), .groups = 'drop') %>%
       ungroup() %>%
       mutate(p_value = sapply(perm_results, function(x) x$p_value),
              adjusted_p_value = p.adjust(p_value, method = "BH"))
   } else {
-    long_norm_rich_club %>%
+    # long_norm_rich_club %>%
+    long_rich_club %>%
       group_by(node) %>%
       dplyr::filter(p_value<0.05) %>%
       dplyr::filter(n_distinct(group) > 1) %>% # Must be more than one group
@@ -178,9 +201,10 @@ compare_rich_club <- function(mat_array,
              adjusted_p_value = p.adjust(p_value, method = "BH"))
   }
   # Prepare data for plotting and identify significant nodes
-  data_for_plotting <- long_norm_rich_club %>%
+  data_for_plotting <- long_rich_club %>%
     group_by(node, group) %>%
     summarise(
+      .groups = "drop",
       mean_rich_club = mean(rich_club, na.rm = TRUE),
       sd = sd(rich_club, na.rm = TRUE),
       n = n(),
@@ -190,8 +214,9 @@ compare_rich_club <- function(mat_array,
       mean_p_value = mean(p_value)
     ) %>%
     dplyr::filter(dplyr::n()>1) %>% # Must be more than 1 observation in each group
-    dplyr::filter(mean_p_value<0.05 & mean_rich_club > 1) %>%
-    dplyr::filter(sd_lower>1) # Prevents the last few nodes from being significant sometimes.
+    dplyr::filter(mean_p_value<0.05)
+    # dplyr::filter(mean_p_value<0.05 & mean_rich_club > 1) %>%
+    # dplyr::filter(sd_lower>1) # Prevents the last few nodes from being significant sometimes.
 
   sig_nodes <- if (permutation) {
     # Extract node numbers for significant permutation results
@@ -208,13 +233,13 @@ compare_rich_club <- function(mat_array,
   }
 
   if (plot) {
-    rich_plot <- long_norm_rich_club %>%
+    rich_plot <- long_rich_club %>%
       group_by(node, group) %>%
-      summarise(mean_rich_club = mean(rich_club, na.rm = TRUE)) %>%
+      summarise(mean_rich_club = mean(rich_club, na.rm = TRUE), .groups = "drop") %>%
       ggplot(aes(x = as.numeric(node), y = mean_rich_club, color = group)) +
       geom_line(linewidth = 1) +
-      geom_errorbar(data = data_for_plotting, aes(ymin = sd_lower, ymax = sd_upper), width = 0.8) +
-      geom_point(data = long_norm_rich_club[long_norm_rich_club$node %in% sig_nodes,] %>% group_by(node) %>% summarize(mean_rich_club = mean(rich_club)), aes(x = as.numeric(node), y = mean_rich_club+0.04*mean_rich_club), color = "red") +
+      geom_errorbar(data = data_for_plotting, aes(ymin = sd_lower, ymax = sd_upper), linewidth = 0.25) +
+      geom_point(data = long_rich_club[long_rich_club$node %in% sig_nodes,] %>% group_by(node) %>% summarize(mean_rich_club = mean(rich_club)), aes(x = as.numeric(node), y = mean_rich_club+0.03*mean_rich_club), color = "red") +
       theme_light() +
       ylab("Normalised Rich Club Coefficient") +
       xlab("Node Degree")
@@ -223,6 +248,7 @@ compare_rich_club <- function(mat_array,
     if(permutation==FALSE){
       list(results$aov_results %>%
         list_rbind() %>%
+          filter(term=="group") %>%
           cbind(node = results$node),
       rich_plot)
     } else{
