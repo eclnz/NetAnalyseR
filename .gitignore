@@ -1,6 +1,4 @@
 .Rproj.user
 .Rhistory
-<<<<<<< HEAD
 inst/extdata/.Rapp.history
-=======
->>>>>>> NetAnalyseR/TimingEstimate
+.DS_Store
