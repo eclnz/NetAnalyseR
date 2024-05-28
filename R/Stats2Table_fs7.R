@@ -56,54 +56,70 @@
 #' @importFrom tidyselect everything
 
 processFSdata <- function(datasetDir, subject_names = NULL) {
-
-  # Helper function to read aseg.stats files
+  # Helper functions to read contents of files
+  readColHeaders <- function(file_path){
+    meta <- readLines(file_path)
+    colheader <- grep("^# ColHeaders", meta, value = TRUE)
+    # Remove the "^# ColHeaders " at the start
+    cleaned_line <- sub("^# ColHeaders ", "", colheader)
+    # Trim spaces from start and finish
+    trimmed_line <- trimws(cleaned_line)
+    # Split the line into a vector
+    headers_vector <- strsplit(trimmed_line, " ")[[1]]
+    # Set variable names of contents
+    return(headers_vector)
+  }
   readAseg <- function(subjectDir) {
-    aseg_file <- data.frame(utils::read.table(file.path(subjectDir,"stats","aseg.stats"), row.names=1))[,c(3,4)]
-    t(data.frame(aseg_file[,1], row.names = aseg_file[,2]))
+    file_path <- file.path(subjectDir,"stats","aseg.stats")
+    file_contents <- as.data.frame(read.table(file_path))
+    colNames <- readColHeaders(file_path)
+    colNames[colNames %in% "Volume_mm3"] <- "Vol"
+    names(file_contents) <- colNames
+    # Substitute dashes and underscores for dots within a variable name.
+    file_contents$StructName <- gsub("-", ".", file_contents$StructName)
+    file_contents$StructName <- gsub("_", ".", file_contents$StructName)
+    # Change Left and Right to lh and rh
+    file_contents$StructName <- gsub("Left", "lh", file_contents$StructName)
+    file_contents$StructName <- gsub("Right", "rh", file_contents$StructName)
+    return(file_contents[c('StructName', 'Vol')])
   }
-
-  # Helper function to read metadata from aseg.stats
-  readMetaAseg <- function(subjectDir) {
-    aseg_meta <- readLines(file.path(subjectDir,"stats","aseg.stats"), n=35)[15:34]
-    meta1 <- gsub("# ", "", aseg_meta)
-    meta <- t(data.frame(strsplit(meta1, ",")))[,c(2,4)]
-    metaTable <- t(data.frame(meta[,2]))
-    colnames(metaTable) <- meta[,1]
-    return(metaTable)
-  }
-
-  # Helper function to read and process aparc.stats files
-  readAparc <- function(subjectDir, value) {
-    sides <- c("lh", "rh")
-    aparcTable <- NULL
-
-    for (side in sides) {
+  readAparc <- function(subjectDir) {
+    read_side_aparc <- function(subjectDir, side){
+      # Read in file contents
       file_path <- file.path(subjectDir, "stats", paste0(side, ".aparc.stats"))
-      areaThickness <- as.data.frame(read.table(file_path, row.names=1))[, c(2,4)]
+      file_contents <- as.data.frame(read.table(file_path))
+      # Read in metadata
       rowValues <- rownames(areaThickness)
-
-      meta <- readLines(file_path)[c(20, 21)]
-      meta1 <- gsub("# ", "", meta)
-      meta2 <- t(data.frame(strsplit(meta1, ",")))[, c(2,4)]
-      meta3 <- data.frame(meta2[ifelse(value == "area", 1, 2),2])
-      value2 <- gsub(" ", "", meta2[ifelse(value == "area", 1, 2),1])
-
-      colnames(meta3) <- paste(side, "_", value2, "_", value, sep="")
-      extra <- t(matrix(areaThickness[,ifelse(value == "area", 1, 2)]))
-      colnames(extra) <- paste(side, "_", rowValues, "_", value, sep="")
-      aparcTable <- ifelse(is.null(aparcTable), cbind(extra, meta3), cbind(aparcTable, extra, meta3))
+      # Set variable names to specified headers
+      colNames <- readColHeaders(file_path) # This is going to throw errors if the standard names change.
+      colNames[colNames %in% "GrayVol"] <- "Vol"
+      names(file_contents) <- colNames
+      # Set hemisphere of structures in first variable
+      file_contents$StructName <- paste0(side,".",file_contents$StructName)
+      return(file_contents[c("StructName", "Vol", "SurfArea", "ThickAvg")])
     }
-    return(aparcTable)
+    aparc <- rbind(
+      read_side_aparc(subjectDir, 'lh'),
+      read_side_aparc(subjectDir, 'rh')
+      )
+    return(aparc)
   }
 
   # Read and merge all data
   readFiles <- function(subjectDir) {
-    asegTable <- readAseg(subjectDir)
-    metaTable <- readMetaAseg(subjectDir)
-    areaAparc <- readAparc(subjectDir, "area")
-    thickAparc <- readAparc(subjectDir, "thickness")
-    cbind(asegTable, metaTable, areaAparc, thickAparc)
+    asegTable <- readAseg(subjectDir) %>%
+      pivot_longer(cols = Vol, names_to = "Metric", values_to = "Value") %>%
+      unite("Combined", StructName, Metric, sep = "_") %>%
+      pivot_wider(names_from = Combined, values_from = Value)
+names(asegTable)
+
+    aparcTable <- readAparc(subjectDir) %>%
+      pivot_longer(cols = Vol:ThickAvg, names_to = "Metric", values_to = "Value") %>%
+      unite("Combined", StructName, Metric, sep = "_") %>%
+      pivot_wider(names_from = Combined, values_from = Value)
+
+    table <- cbind(asegTable, aparcTable)
+    return(table)
   }
 
   subjectDirs <- unique(list.dirs(datasetDir, recursive=FALSE))
