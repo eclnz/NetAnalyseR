@@ -7,6 +7,7 @@
 compare_rich_club(
   mat_array,
   subjects,
+  normalize = T,
   grouping_list,
   plot = FALSE,
   permutation = FALSE,
@@ -18,6 +19,8 @@ compare_rich_club(
 \item{mat_array}{An array of connectivity matrices where each slice corresponds to a different subject.}
 
 \item{subjects}{A vector of subject identifiers.}
+
+\item{normalize}{Whether to compare rich club coefficient or normalised rich club coefficient between groups.}
 
 \item{grouping_list}{A list specifying how subjects should be grouped for analysis.}
 
@@ -34,19 +37,4 @@ A list containing statistical analysis results and optionally a plot, depending 
 }
 \description{
 Computes and compares rich club coefficients for multiple subjects grouped by given criteria.
-}
-\examples{
-data_dir <- system.file("extdata", package = "NetAnalyseR")
-subjects <- c("A", "B", "C", "D")
-grouping <- list(AB = c("A" , "B"), CD = c("C", "D"))
-file_convention <- ".csv"
-output <- process_matrices(data_dir, subjects, file_convention)
-compare_rich_club(mat_array = output$matrices,
-                  subjects = output$subjects,
-                  n_rand = 100,
-                  grouping_list = grouping,
-                  plot = T)
-
-
-
 }

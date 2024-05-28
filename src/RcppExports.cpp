@@ -104,20 +104,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// richClubCoefficient
-NumericVector richClubCoefficient(NumericMatrix W, IntegerVector NodeDegree, int klevel, int NofNodes);
-RcppExport SEXP _NetAnalyseR_richClubCoefficient(SEXP WSEXP, SEXP NodeDegreeSEXP, SEXP klevelSEXP, SEXP NofNodesSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type W(WSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type NodeDegree(NodeDegreeSEXP);
-    Rcpp::traits::input_parameter< int >::type klevel(klevelSEXP);
-    Rcpp::traits::input_parameter< int >::type NofNodes(NofNodesSEXP);
-    rcpp_result_gen = Rcpp::wrap(richClubCoefficient(W, NodeDegree, klevel, NofNodes));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_NetAnalyseR_floydWarshallRcpp", (DL_FUNC) &_NetAnalyseR_floydWarshallRcpp, 1},
@@ -128,7 +114,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_NetAnalyseR_localEfficiencyWei", (DL_FUNC) &_NetAnalyseR_localEfficiencyWei, 1},
     {"_NetAnalyseR_rewireNetworkCpp", (DL_FUNC) &_NetAnalyseR_rewireNetworkCpp, 2},
     {"_NetAnalyseR_generateRewiredMatrices", (DL_FUNC) &_NetAnalyseR_generateRewiredMatrices, 2},
-    {"_NetAnalyseR_richClubCoefficient", (DL_FUNC) &_NetAnalyseR_richClubCoefficient, 4},
     {NULL, NULL, 0}
 };
 
