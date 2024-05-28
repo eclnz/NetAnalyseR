@@ -78,7 +78,3 @@ generateRewiredMatrices <- function(initialMatrix, n = 100L) {
     .Call(`_NetAnalyseR_generateRewiredMatrices`, initialMatrix, n)
 }
 
-richClubCoefficient <- function(W, NodeDegree, klevel, NofNodes) {
-    .Call(`_NetAnalyseR_richClubCoefficient`, W, NodeDegree, klevel, NofNodes)
-}
-

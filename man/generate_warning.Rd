@@ -17,7 +17,4 @@ No return value; the function solely issues a warning and updates the global env
 \description{
 This function generates a specified warning message only once during the R session.
 }
-\examples{
-generate_warning_once("warned_about_issue", "Attention: Specific issue has occurred!")
-}
 \keyword{internal}

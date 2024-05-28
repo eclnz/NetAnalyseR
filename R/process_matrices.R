@@ -16,7 +16,9 @@
 #'
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' output <- process_matrices(data_dir, file_convention = "_hcp.csv")
+#' subjects <- c("A", "B", "C", "D")
+#' file_convention <- ".csv"
+#' process_matrices(data_dir, subjects, file_convention)
 #'
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
