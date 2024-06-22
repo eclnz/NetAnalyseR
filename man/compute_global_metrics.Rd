@@ -17,12 +17,12 @@ compute_global_metrics(
 
 \item{global_metrics}{A vector of strings specifying the global metrics to be calculated.}
 
-\item{target}{An optional float specifying the density all networks should be pruned to.}
+\item{density_val}{An optional float specifying the density all networks should be pruned to.}
+
+\item{target}{An optional float specifying the total network strength all networks should be normalized to}
 
 \item{subject_names}{An optional vector of subject identifiers. If not provided, subjects will be named
 sequentially as Subject1, Subject2, etc.}
-
-\item{density}{An optional float specifying the density all networks should be pruned to.}
 }
 \value{
 A data frame containing the calculated global metrics for each subject, with each row corresponding
@@ -45,5 +45,5 @@ valid_global_metrics <- c("characteristic_path_length",
                           "normalised_characteristic_path_length",
                           "small_worldness")
 subject_names <- c("Subject1")
-global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
+global_df <- compute_global_metrics(W, valid_global_metrics, NULL, NULL, subject_names)
 }

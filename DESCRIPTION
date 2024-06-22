@@ -23,7 +23,9 @@ Imports:
     stringr,
     tidyselect,
     broom,
-    ggplot2
+    ggplot2,
+    cowplot,
+    ggsignif
 LinkingTo: 
     Rcpp,
     RcppArmadillo
