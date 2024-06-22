@@ -6,6 +6,8 @@
 #'
 #' @param matrices_array An array where each slice represents a connectivity matrix for a subject.
 #' @param global_metrics A vector of strings specifying the global metrics to be calculated.
+#' @param density An optional float specifying the density all networks should be pruned to.
+#' @param target An optional float specifying the density all networks should be pruned to.
 #' @param subject_names An optional vector of subject identifiers. If not provided, subjects will be named
 #' sequentially as Subject1, Subject2, etc.
 #'
@@ -29,7 +31,7 @@
 #' @importFrom abind abind
 #' @export
 
-compute_global_metrics <- function(matrices_array, global_metrics, subject_names = NULL) {
+compute_global_metrics <- function(matrices_array, global_metrics, density_val = NULL, target = NULL, subject_names = NULL) {
   # If the user submits a single matrix the dimensions of the matrix as an array must be set.
   if(is.na(dim(matrices_array)[3])){
     dim(matrices_array)[3] <- 1
@@ -88,6 +90,26 @@ compute_global_metrics <- function(matrices_array, global_metrics, subject_names
       user_benchmark <- benchmark_performance()
     }
   }
+
+  # Normalise arrays by density
+  if(!is.null(density_val)){
+     if(density_val>=1 | density_val<= 0){
+       warning('density must be between 0 and 1')
+     }
+     else{
+       for(i in 1:dim(matrices_array)[3]){
+         matrices_array[,,i] <- threshold_density(matrices_array[,,i], density_val)
+       }
+     }
+  }
+
+  # Normalize arrays by target
+  if(!is.null(target)){
+    for(i in 1:dim(matrices_array)[3]){
+      matrices_array[,,i] <- normalise_inter_node(matrices_array[,,i], target)
+    }
+  }
+
 
   estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
 

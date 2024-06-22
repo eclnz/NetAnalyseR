@@ -4,15 +4,25 @@
 \alias{compute_global_metrics}
 \title{Compute Global Metrics for Brain Network Data}
 \usage{
-compute_global_metrics(matrices_array, global_metrics, subject_names = NULL)
+compute_global_metrics(
+  matrices_array,
+  global_metrics,
+  density_val = NULL,
+  target = NULL,
+  subject_names = NULL
+)
 }
 \arguments{
 \item{matrices_array}{An array where each slice represents a connectivity matrix for a subject.}
 
 \item{global_metrics}{A vector of strings specifying the global metrics to be calculated.}
 
+\item{target}{An optional float specifying the density all networks should be pruned to.}
+
 \item{subject_names}{An optional vector of subject identifiers. If not provided, subjects will be named
 sequentially as Subject1, Subject2, etc.}
+
+\item{density}{An optional float specifying the density all networks should be pruned to.}
 }
 \value{
 A data frame containing the calculated global metrics for each subject, with each row corresponding
