@@ -6,8 +6,8 @@
 #'
 #' @param matrices_array An array where each slice represents a connectivity matrix for a subject.
 #' @param global_metrics A vector of strings specifying the global metrics to be calculated.
-#' @param density An optional float specifying the density all networks should be pruned to.
-#' @param target An optional float specifying the density all networks should be pruned to.
+#' @param density_val An optional float specifying the density all networks should be pruned to.
+#' @param target An optional float specifying the total network strength all networks should be normalized to
 #' @param subject_names An optional vector of subject identifiers. If not provided, subjects will be named
 #' sequentially as Subject1, Subject2, etc.
 #'
@@ -26,7 +26,7 @@
 #'                           "normalised_characteristic_path_length",
 #'                           "small_worldness")
 #' subject_names <- c("Subject1")
-#' global_df <- compute_global_metrics(W, valid_global_metrics, subject_names)
+#' global_df <- compute_global_metrics(W, valid_global_metrics, NULL, NULL, subject_names)
 #' @importFrom dplyr select
 #' @importFrom abind abind
 #' @export
@@ -92,15 +92,15 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
   }
 
   # Normalise arrays by density
-  if(!is.null(density_val)){
-     if(density_val>=1 | density_val<= 0){
+  if (!is.null(density_val)) {
+     if(density_val>=1 || density_val<= 0){
        warning('density must be between 0 and 1')
      }
      else{
-       for(i in 1:dim(matrices_array)[3]){
-         matrices_array[,,i] <- threshold_density(matrices_array[,,i], density_val)
-       }
-     }
+      for (i in 1:dim(matrices_array)[3]) {
+        matrices_array[,,i] <- threshold_density(matrices_array[,,i], density_val)
+      }
+    }
   }
 
   # Normalize arrays by target
