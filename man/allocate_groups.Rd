@@ -29,7 +29,9 @@ subjects <- c("A", "B", "C", "D")
 file_convention <- ".csv"
 output <- process_matrices(data_dir, subjects, file_convention)
 global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
-global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
+global_df <- compute_global_metrics(matrices_array = output$matrices,
+                                    global_metrics = global_metrics,
+                                    subject_names = output$subjects)
 grouping_list <- list(
   control = c("A", "B"),
   treatment = c("C", "D")
