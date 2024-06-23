@@ -37,11 +37,7 @@ characteristic_path_length <- function(W) {
   # Replace infinite distances with NA to ignore them in the mean calculation
   D[is.infinite(D)] <- NA
 
-  # Extract all valid (non-NA) distances from the matrix
-  Dv <- D[!is.na(D)]
-
-  # Calculate the mean of all valid distances as the characteristic path length
-  lambda <- mean(Dv)
+  lambda <- mean(D[lower.tri(D)])
 
   # Return the characteristic path length
   return(lambda)
