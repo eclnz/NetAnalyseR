@@ -2,7 +2,7 @@
 % Please edit documentation in R/group_comparisons.R
 \name{group_comparisons}
 \alias{group_comparisons}
-\title{Group Comparisons for Metrics with Visualization}
+\title{Group Comparisons for Metrics with Dynamic Testing and Visualization}
 \usage{
 group_comparisons(
   group_df,
@@ -10,7 +10,7 @@ group_comparisons(
   comparisons,
   p_adjust_method = "BH",
   group_order = NULL,
-  test_type = "parametric"
+  test_type = NULL
 )
 }
 \arguments{
@@ -18,17 +18,17 @@ group_comparisons(
 
 \item{metrics}{Character vector of metric column names to analyze.}
 
-\item{comparisons}{List of pairwise group comparisons for t-tests.}
+\item{comparisons}{List of pairwise group comparisons for tests or 'all' to include all possible pairwise comparisons.}
 
 \item{p_adjust_method}{Character string specifying the p-value adjustment method (default is "BH").}
 
 \item{group_order}{Optional character vector specifying the order of groups.}
 
-\item{test_type}{Optional character vector specifying whether the tests should be parametric or nonparametric}
+\item{test_type}{Character string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by normality and homogeneity tests.}
 }
 \value{
-A list with ANOVA results, t-test results, and a combined plot.
+A list with overall test results, pairwise test results, normality and homogeneity results, and a combined plot.
 }
 \description{
-Performs ANOVA and pairwise t-tests for specified metrics across groups, adjusting p-values and generating combined plots.
+Performs statistical tests on specified metrics across groups, adjusting p-values and generating combined plots. Supports dynamic determination of test type.
 }
