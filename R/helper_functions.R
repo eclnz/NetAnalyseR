@@ -109,3 +109,47 @@ threshold_mat <- function(mat, threshold) {
   mat[abs(mat) < threshold] <- 0
   return(mat)
 }
+
+#' @title Update Progress of Matrix Processing
+#' @description Displays the progress of processing matrices, including elapsed time, remaining time, and estimated time of completion.
+#' @param slice_counter Integer specifying the number of matrices processed so far.
+#' @param total_slices Integer specifying the total number of matrices to process.
+#' @param start_time POSIXct object indicating the start time of the processing.
+#' @param metric_name Character string specifying the name of the metric being processed.
+#' @return None. Prints progress information to the console.
+#' @examples
+#' \dontrun{
+#' start_time <- Sys.time()
+#' for (i in 1:100) {
+#'   Sys.sleep(0.1)
+#'   update_progress(i, 100, start_time, "Example Metric")
+#' }
+#' }
+#' @export
+update_progress <- function(slice_counter, total_slices, start_time, metric_name, max_metric_length) {
+  current_time <- Sys.time()
+  elapsed_time <- as.numeric(difftime(current_time, start_time, units = "secs"))
+  rate <- slice_counter / elapsed_time
+  remaining_slices <- total_slices - slice_counter
+  estimated_remaining_time <- remaining_slices / rate
+  finish_time <- current_time + estimated_remaining_time
+  finish_time_formatted <- format(finish_time, "%Y-%m-%d %H:%M:%S")
+
+  # Format remaining time as minutes and seconds
+  remaining_time_formatted <- ifelse(estimated_remaining_time >= 60,
+                                     sprintf("%d min %.0f sec", floor(estimated_remaining_time / 60), estimated_remaining_time %% 60),
+                                     sprintf("%.2f sec", estimated_remaining_time))
+  # Make sure max character length is greater than metric name
+  if(max_metric_length<nchar(metric_name)){
+    max_metric_length <- nchar(metric_name)
+  }
+  # Create padding for alignment
+  padding <- paste0(rep(" ", max_metric_length - nchar(metric_name)), collapse = "")
+
+  cat(sprintf(
+    "\rMetric %s%s: Completed %d of %d slices | Elapsed: %.2f s | Remaining: %s | ETA: %s",
+    metric_name, padding, slice_counter, total_slices, elapsed_time, remaining_time_formatted, finish_time_formatted))
+
+  flush.console()
+}
+
