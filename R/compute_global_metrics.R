@@ -97,25 +97,61 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
     }
   }
 
+  # Initialize a list to store results for each metric
+  global <- list()
 
-  estimate_total_duration(matrices_array,user_benchmark,valid_user_metrics)
+  # Max character number
+  max_nchar <- nchar("normalised_characteristic_path_length")
 
-  if(length(user_non_random_metrics)>0){
-    global <- lapply(user_non_random_metrics, function(metric_function) {
-      apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
-      })
+  # Process user non-random metrics
+  if (length(user_non_random_metrics) > 0) {
+    for (metric_idx in seq_along(user_non_random_metrics)) {
+      metric_function <- user_non_random_metrics[[metric_idx]]
+      metric_name <- as.character(metric_function)
+
+      # Initialize a vector to store the results for the current metric
+      metric_results <- vector("list", dim(matrices_array)[3])
+
+      # Record the start time
+      start_time <- Sys.time()
+
+      # Loop over each slice of the matrix array
+      for (slice_idx in 1:dim(matrices_array)[3]) {
+        # Apply the metric function to the current slice
+        metric_results[[slice_idx]] <- get(metric_function)(matrices_array[,,slice_idx])
+
+        # Update progress
+        update_progress(slice_idx, dim(matrices_array)[3],start_time, metric_name, max_nchar)
+      }
+
+      # Store the results for the current metric
+      global[[metric_name]] <- metric_results
+      cat("\n")
+    }
   }
-
   # Create a data frame from the global metrics
   global_df <- data.frame(lapply(global, as.numeric))
   colnames(global_df) <- user_non_random_metrics
 
-  if(length(user_random_metrics)>0){
+  # Process user random metrics
+  if (length(user_random_metrics) > 0) {
+    # Initialize the rand_array
+    rand_array <- vector("list", dim(matrices_array)[3])
 
-    rand_array <- apply(matrices_array, MARGIN = 3, generateRewiredMatrices) %>%
-      lapply(function(sublist) {
-        abind(sublist, along = 3)
-      })
+    # Record the start time for rand_array generation
+    start_time_rand <- Sys.time()
+
+    # Generate rewired matrices with progress and ETA
+    for (slice_idx in 1:dim(matrices_array)[3]) {
+      rand_array[[slice_idx]] <- generateRewiredMatrices(matrices_array[,,slice_idx])
+
+      update_progress(slice_idx, dim(matrices_array)[3],start_time_rand, "Rewired Networks Generation", max_nchar)
+    }
+    cat("\n")
+    # Combine rand_array into a single 3D array
+    rand_array <- lapply(rand_array, function(sublist) {
+      abind(sublist, along = 3)
+    })
 
     combined_list <- lapply(seq_len(dim(matrices_array)[3]), function(i) {
       list(
@@ -124,24 +160,44 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
       )
     })
 
-    if("normalised_clustering_coefficient" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
+    # Start time for random metrics
+    start_time_metrics <- Sys.time()
+
+    # Initialize a counter for slices processed
+    slice_counter <- 0
+
+    if ("normalised_clustering_coefficient" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
       norm_clust <- lapply(combined_list, function(item) {
-        normalised_clustering_coefficient(list(item$original_matrix, item$associated_array))
-      }) %>%
-        unlist()
+        slice_counter <<- slice_counter + 1
+        # Apply the metric function to the current slice
+        result <- normalised_clustering_coefficient(list(item$original_matrix, item$associated_array))
+
+        # Update progress for normalised_clustering_coefficient
+        update_progress(slice_counter, dim(matrices_array)[3], start_time_metrics, "normalised_clustering_coefficient", max_nchar)
+        return(result)
+      }) %>% unlist()
       global_df$normalised_clustering_coefficient <- norm_clust
     }
+    cat("\n")
 
-    if("normalised_characteristic_path_length" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
+    if ("normalised_characteristic_path_length" %in% user_random_metrics || "small_worldness" %in% user_random_metrics) {
+      slice_counter <- 0  # Reset counter for next metric
       norm_cpl <- lapply(combined_list, function(item) {
-        normalised_characteristic_path_length(list(item$original_matrix, item$associated_array))
-      }) %>%
-        unlist()
+        slice_counter <<- slice_counter + 1
+        # Apply the metric function to the current slice
+        result <- normalised_characteristic_path_length(list(item$original_matrix, item$associated_array))
+
+        # Update progress for normalised_characteristic_path_length
+        update_progress(slice_counter, dim(matrices_array)[3], start_time_metrics, "normalised_characteristic_path_length", max_nchar)
+        return(result)
+      }) %>% unlist()
+      cat("\n")
       global_df$normalised_characteristic_path_length <- norm_cpl
+
     }
 
-    if( "small_worldness" %in% user_random_metrics){
-      global_df$small_world <- norm_clust/norm_cpl
+    if ("small_worldness" %in% user_random_metrics) {
+      global_df$small_world <- norm_clust / norm_cpl
     }
   }
 
@@ -158,3 +214,5 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
 
   return(global_df)
 }
+
+
