@@ -81,14 +81,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // rewireNetworkCpp
-NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter);
-RcppExport SEXP _NetAnalyseR_rewireNetworkCpp(SEXP RSEXP, SEXP initialIterSEXP) {
+NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter, bool validate);
+RcppExport SEXP _NetAnalyseR_rewireNetworkCpp(SEXP RSEXP, SEXP initialIterSEXP, SEXP validateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type R(RSEXP);
     Rcpp::traits::input_parameter< int >::type initialIter(initialIterSEXP);
-    rcpp_result_gen = Rcpp::wrap(rewireNetworkCpp(R, initialIter));
+    Rcpp::traits::input_parameter< bool >::type validate(validateSEXP);
+    rcpp_result_gen = Rcpp::wrap(rewireNetworkCpp(R, initialIter, validate));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -112,7 +113,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_NetAnalyseR_rewireTwoNetworksCpp", (DL_FUNC) &_NetAnalyseR_rewireTwoNetworksCpp, 3},
     {"_NetAnalyseR_localClusteringCoefficientWei", (DL_FUNC) &_NetAnalyseR_localClusteringCoefficientWei, 1},
     {"_NetAnalyseR_localEfficiencyWei", (DL_FUNC) &_NetAnalyseR_localEfficiencyWei, 1},
-    {"_NetAnalyseR_rewireNetworkCpp", (DL_FUNC) &_NetAnalyseR_rewireNetworkCpp, 2},
+    {"_NetAnalyseR_rewireNetworkCpp", (DL_FUNC) &_NetAnalyseR_rewireNetworkCpp, 3},
     {"_NetAnalyseR_generateRewiredMatrices", (DL_FUNC) &_NetAnalyseR_generateRewiredMatrices, 2},
     {NULL, NULL, 0}
 };
