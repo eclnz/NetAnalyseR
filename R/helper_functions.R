@@ -14,7 +14,9 @@
 #' file_convention <- ".csv"
 #' output <- process_matrices(data_dir, subjects, file_convention)
 #' global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
-#' global_df <- compute_global_metrics(output$matrices, global_metrics, output$subjects)
+#' global_df <- compute_global_metrics(matrices_array = output$matrices,
+#'                                     global_metrics = global_metrics,
+#'                                     subject_names = output$subjects)
 #' grouping_list <- list(
 #'   control = c("A", "B"),
 #'   treatment = c("C", "D")
@@ -57,16 +59,53 @@ allocate_groups <- function(data_frame, grouping_list) {
     }))
 }
 
+#' @title Generate Symmetric Matrix with Random Values
+#' @description Creates a symmetric matrix with absolute random normal values.
+#' @param dim Integer specifying the dimension of the matrix.
+#' @return A symmetric matrix with dimensions `dim` x `dim`.
+#' @examples
+#' mat <- mat_gen(5)
+#' @export
+mat_gen <- function(dim) {
+  # Generate a matrix with absolute random normal values
+  mat <- matrix(abs(rnorm(dim * dim, mean = 0, sd = 100)), nrow = dim, ncol = dim)
 
-#' @title Generate a Warning Once
-#' @description This function generates a specified warning message only once during the R session.
-#' @param warning_var_name A string representing the name of the variable used to track whether the warning has been issued.
-#' @param warning_message A string containing the warning message to be displayed.
-#' @return No return value; the function solely issues a warning and updates the global environment.
-#' @keywords internal
-generate_warning <- function(warning_var_name, warning_message) {
-  if (!get(warning_var_name, envir = .GlobalEnv)) {
-    warning(warning_message)
-    assign(warning_var_name, TRUE, envir = .GlobalEnv)
+  # Make the matrix symmetric
+  mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
+
+  return(mat)
+}
+
+#' @title Generate Array of Thresholded Symmetric Matrices
+#' @description Creates an array of symmetric matrices with values above a specified threshold.
+#' @param dim Integer specifying the dimension of each matrix.
+#' @param length Integer specifying the number of matrices in the array.
+#' @param threshold Numeric value to threshold matrix entries (default is 0).
+#' @return An array of symmetric matrices with dimensions `dim` x `dim` x `length`.
+#' @examples
+#' mat_array <- mat_array_gen(5, 10, threshold = 50)
+#' @export
+mat_array_gen <- function(dim, length, threshold = 0) {
+  # Initialize an array to hold matrices
+  mat_array <- array(dim = c(dim, dim, length))
+
+  # Generate and threshold each matrix
+  for (i in 1:length) {
+    mat_array[,,i] <- threshold_mat(mat_gen(dim), threshold)
   }
+
+  return(mat_array)
+}
+
+#' @title Apply Threshold to Matrix
+#' @description Applies a threshold to a matrix, setting elements below the threshold to zero.
+#' @param mat A numeric matrix.
+#' @param threshold Numeric value to threshold matrix entries.
+#' @return A matrix with values below the threshold set to zero.
+#' @examples
+#' thresholded_mat <- threshold_mat(mat_gen(5), 50)
+#' @export
+threshold_mat <- function(mat, threshold) {
+  mat[abs(mat) < threshold] <- 0
+  return(mat)
 }
