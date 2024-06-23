@@ -25,7 +25,9 @@ Imports:
     broom,
     ggplot2,
     cowplot,
-    ggsignif
+    ggsignif,
+    car,
+    utils
 LinkingTo: 
     Rcpp,
     RcppArmadillo
