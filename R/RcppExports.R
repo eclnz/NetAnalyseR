@@ -51,24 +51,24 @@ localEfficiencyWei <- function(W_original) {
 #' This function takes a network represented as an adjacency matrix and
 #' performs a specified number of edge rewiring iterations to randomize the network.
 #' It checks for network density and skips rewiring if the network is fully connected.
-#'
+#' @name rewireNetworkCpp
 #' @param R A numeric matrix representing the network's adjacency matrix.
-#' @param initialIter The number of iterations for the rewiring process.
+#' @param initialIter int number of iterations for the rewiring process.
+#' @param validate bool specifying whether to check the validity of the input matrix
 #'
 #' @return A rewired numeric matrix representing the network's adjacency matrix.
 #' @export
-rewireNetworkCpp <- function(R, initialIter) {
-    .Call(`_NetAnalyseR_rewireNetworkCpp`, R, initialIter)
+rewireNetworkCpp <- function(R, initialIter = 2L, validate = TRUE) {
+    .Call(`_NetAnalyseR_rewireNetworkCpp`, R, initialIter, validate)
 }
 
 #' Generate a Series of Rewired Matrices
 #'
-#' Starts with an initial network matrix, performs an initial 100 edge rewirings,
-#' and then continues to rewire the network with 1 iteration for each subsequent step,
-#' saving the state of the matrix after each single rewiring. This process is repeated
-#' until 'n' rewired matrices are generated.
+#' Rewires a matrix n times, performing 10 iterations each time.
+#' Saves all random matrices generated as a list.
 #' The output is in the format of a list. If manually using the output in normalised mesures
 #' the output must be converted to an array with `abind::abind(matrix, along = 3)`
+#' @name generateRewiredMatrices
 #' @param initialMatrix A numeric matrix representing the initial network's adjacency matrix.
 #' @param n The number of rewired matrices to generate.
 #'

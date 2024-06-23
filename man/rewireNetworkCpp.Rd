@@ -4,12 +4,14 @@
 \alias{rewireNetworkCpp}
 \title{Rewire a Network Matrix}
 \usage{
-rewireNetworkCpp(R, initialIter)
+rewireNetworkCpp(R, initialIter = 2L, validate = TRUE)
 }
 \arguments{
 \item{R}{A numeric matrix representing the network's adjacency matrix.}
 
-\item{initialIter}{The number of iterations for the rewiring process.}
+\item{initialIter}{int number of iterations for the rewiring process.}
+
+\item{validate}{bool specifying whether to check the validity of the input matrix}
 }
 \value{
 A rewired numeric matrix representing the network's adjacency matrix.
