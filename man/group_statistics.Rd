@@ -9,7 +9,8 @@ group_statistics(
   metrics,
   comparisons,
   p_adjust_method = "BH",
-  test_type = NULL
+  test_type = NULL,
+  num_permutations = 1000
 )
 }
 \arguments{
@@ -21,7 +22,9 @@ group_statistics(
 
 \item{p_adjust_method}{Character string specifying the p-value adjustment method (default is "BH").}
 
-\item{test_type}{Character string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by Shapiro-Wilk and Levene's tests.}
+\item{test_type}{Character string specifying "parametric", "nonparametric" or "permutation" (optional). If NULL, parametric or nonparametric test type is determined by Shapiro-Wilk and Levene's tests. Permutation testing utilises nonparametric testing.}
+
+\item{num_permutations}{Integer specifying the number of permutations to perform.}
 }
 \value{
 A list with test results, pairwise test results, and normality and homogeneity test results.
