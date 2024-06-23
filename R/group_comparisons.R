@@ -4,11 +4,12 @@
 #' @param metrics Character vector of metric column names to analyze.
 #' @param comparisons List of pairwise group comparisons for t-tests or Wilcoxon tests.
 #' @param p_adjust_method Character string specifying the p-value adjustment method (default is "BH").
-#' @param test_type Character string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by Shapiro-Wilk and Levene's tests.
+#' @param test_type Character string specifying "parametric", "nonparametric" or "permutation" (optional). If NULL, parametric or nonparametric test type is determined by Shapiro-Wilk and Levene's tests. Permutation testing utilises nonparametric testing.
+#' @param num_permutations Integer specifying the number of permutations to perform.
 #' @importFrom stats as.formula kruskal.test t.test wilcox.test shapiro.test
 #' @importFrom car leveneTest
 #' @return A list with test results, pairwise test results, and normality and homogeneity test results.
-group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "BH", test_type = NULL) {
+group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "BH", test_type = NULL, num_permutations = 1000) {
   determine_test_type <- function(metric_data, group_variable) {
     # Ensure group is factor
     group_variable <- as.factor(group_variable)
@@ -26,6 +27,16 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
     test_type <- if (shapiro_overall_result && levene_overall_result) "parametric" else "nonparametric"
 
     return(list(test_type = test_type, shapiro_p_values = shapiro_p, levene_test = levene_test))
+  }
+
+  permutation_test <- function(metric_data, group_variable, num_permutations = 1000) {
+    observed_stat <- kruskal.test(metric_data ~ group_variable)$statistic
+    perm_stats <- replicate(num_permutations, {
+      permuted_groups <- sample(group_variable)
+      kruskal.test(metric_data ~ permuted_groups)$statistic
+    })
+    p_value <- mean(perm_stats >= observed_stat)
+    return(p_value)
   }
 
   test_results <- list()
@@ -46,7 +57,12 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
       test_result <- stats::aov(formula, data = filtered_df) %>% tidy()
     } else if (test_type == "nonparametric") {
       test_result <- stats::kruskal.test(formula, data = filtered_df) %>% tidy()
-    } else {
+    } else if (test_type == "permutation") {
+      p_value <- permutation_test(filtered_df[[metric]], filtered_df$group, num_permutations)
+      test_result <- data.frame(term = metric, statistic = NA, p.value = p_value, method = "Permutation Test")
+    }
+
+    else {
       stop("Invalid test_type. Use 'parametric' or 'nonparametric'.")
     }
     test_results[[metric]] <- test_result
@@ -67,6 +83,10 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
         pairwise_test_result <- t.test(as.formula(paste(metric, "~ group")), data = comparison_df) %>% tidy()
       } else if (test_type == "nonparametric") {
         pairwise_test_result <- wilcox.test(as.formula(paste(metric, "~ group")), data = comparison_df) %>% tidy()
+      } else if (test_type == "permutation"){
+        # Use permutation test for pairwise comparisons
+        p_value <- permutation_test(comparison_df[[metric]], comparison_df$group, num_permutations)
+        pairwise_test_result <- data.frame(term = metric, statistic = NA, p.value = p_value, method = "Permutation Test")
       }
 
       p_values <- c(p_values, pairwise_test_result$p.value)
