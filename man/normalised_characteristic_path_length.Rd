@@ -4,13 +4,19 @@
 \alias{normalised_characteristic_path_length}
 \title{Normalized Characteristic Path Length Calculation}
 \usage{
-normalised_characteristic_path_length(mat_list, rand_array = NULL)
+normalised_characteristic_path_length(
+  mat_list,
+  rand_array = NULL,
+  validate = TRUE
+)
 }
 \arguments{
 \item{mat_list}{Either a square matrix representing the network for which the characteristic path length is to be calculated, or a list containing the network matrix and an optional 3D array of randomized matrices for comparison.}
 
 \item{rand_array}{An optional 3D array of randomized matrices for comparison if the input is a single matrix. If NULL and the input is a matrix,
 a set of randomized matrices is generated. This parameter is ignored if the input is a list.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 The normalized characteristic path length, computed as the ratio of the characteristic path length of the input network to the average characteristic path length of the randomized networks.

@@ -8,6 +8,7 @@
 #'
 #' @param W A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 #'          Weights should be non-negative, and diagonal elements (self-loops) are ignored.
+#' @param validate Whether to validate the input matrix.
 #' @return A numeric vector of length equal to the number of nodes in the graph, where each element represents
 #'         the local efficiency of the corresponding node.
 #' @examples
@@ -15,9 +16,9 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' local_efficiency_wei(W)
 #' @export
-local_efficiency_wei <- function(W) {
+local_efficiency_wei <- function(W, validate = TRUE) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
-  W <- validate_matrix(W)
+  if(validate){validate_matrix(W)}
   # Remove self-loops by setting diagonal elements to zero
   diag(W) <- 0
   # Determine if there is a connection (edge) between nodes
@@ -27,7 +28,7 @@ local_efficiency_wei <- function(W) {
   # Conversion factor for cube root
   cubeRootFactor <- 1 / 3
   # Convert weights to lengths for distance calculation
-  lengths <- length_inversion(W)
+  lengths <- length_inversion(W, FALSE)
   # Initialize vector for local efficiencies
   localEfficiencies <- numeric(numNodes)
   # Calculate cube root of weights and lengths for harmonic mean calculation
@@ -48,7 +49,7 @@ local_efficiency_wei <- function(W) {
     # Subgraph lengths for neighbors, now using cube root lengths similar to `local_efficiency`
     subgraphLengths <- cubeRootLengths[neighbors, neighbors]
     # Calculate distance matrix for the subgraph using floydWarshallRcpp, mirroring `local_efficiency` logic
-    distances <- 1 / floydWarshallRcpp(subgraphLengths)
+    distances <- 1 / shortest_distance(subgraphLengths, FALSE)
     # Symmetric efficiency matrix for the subgraph, derived from distances
     efficiencyMatrix <- distances + t(distances)
     # Pre-sum matrix for numerator calculation, combining weights and efficiency
