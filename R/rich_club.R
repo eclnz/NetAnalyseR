@@ -1,5 +1,5 @@
-rich_club <- function(W, klevel = NULL) {
-  validate_matrix(W)
+rich_club <- function(W, klevel = NULL, validate = TRUE) {
+  if(validate){validate_matrix(W)}
   NofNodes <- ncol(W)
   NodeDegree <- colSums(W != 0)
 
@@ -47,7 +47,7 @@ rich_club <- function(W, klevel = NULL) {
   return(Rw)
 }
 
-norm_rich_club <- function(W, n_rand=100, rand_array = NULL){
+norm_rich_club <- function(W, n_rand=100, rand_array = NULL, validate = TRUE){
   # n_rand = 100
   # Generate randomized matrices if not provided
   if (is.null(rand_array)) {
@@ -57,6 +57,7 @@ norm_rich_club <- function(W, n_rand=100, rand_array = NULL){
   rich <- rich_club(W)
 
   rand_rich <- apply(rand_array, FUN = rich_club, MARGIN = 3)
+
   # rand_rich[is.na(rand_rich)] <- Inf
 
   num_exceeding <- rowSums(as.matrix(rand_rich>=rich)+0)

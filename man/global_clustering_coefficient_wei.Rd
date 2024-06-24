@@ -4,11 +4,13 @@
 \alias{global_clustering_coefficient_wei}
 \title{Calculate the Global Clustering Coefficient for a Weighted Undirected Graph}
 \usage{
-global_clustering_coefficient_wei(W)
+global_clustering_coefficient_wei(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 The matrix should have non-negative weights, and diagonal elements are ignored in the computation.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric value representing the global clustering coefficient of the graph.

@@ -7,6 +7,7 @@
 #'
 #' @param W A square, numeric matrix representing a weighted connection matrix of the network.
 #' The matrix should be symmetric to represent an undirected network.
+#' @param validate Whether to validate the input matrix.
 #' @return A single numeric value representing the network's density.
 #' @examples
 #' # Create a 4x4 undirected, weighted connection matrix
@@ -16,8 +17,8 @@
 #'               2, 4, 5, 0), byrow = TRUE, nrow = 4)
 #' network_density(W)
 #' @export
-network_density <- function(W) {
-  W <- validate_matrix(W) # Validate the input matrix
+network_density <- function(W, validate = TRUE) {
+  if(validate){validate_matrix(W)} # Validate the input matrix
   diag(W) <- 0 # Set diagonal to zero to ignore self-connections
 
   # Convert the weighted connection matrix to a binary adjacency matrix

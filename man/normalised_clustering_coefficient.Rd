@@ -4,14 +4,16 @@
 \alias{normalised_clustering_coefficient}
 \title{Normalized Clustering Coefficient Calculation}
 \usage{
-normalised_clustering_coefficient(mat_list, rand_array = NULL)
+normalised_clustering_coefficient(mat_list, rand_array = NULL, validate = TRUE)
 }
 \arguments{
 \item{mat_list}{A square matrix or a list containing a matrix and an optional 3D array of randomized matrices for comparison.
 If provided as a list, the first element should be the matrix, and the second element (if present) should be the array of randomized matrices.
 If a single matrix is provided and no array of randomized matrices is given, a set of randomized matrices is generated.}
 
-\item{rand_array}{An optional 3D array of randomized matrices for comparison if the input is a single matrix. If NULL and the input is a matrix,
+\item{rand_array}{An optional 3D array of randomized matrices for comparison if the input is a single matrix. If NULL and the input is a matrix,}
+
+\item{validate}{Whether to validate the input matrix.
 a set of randomized matrices is generated. This parameter is ignored if the input is a list.}
 }
 \value{

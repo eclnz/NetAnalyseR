@@ -49,9 +49,6 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
     stop("File convention must have a length of 1: ", file_convention)
   }
 
-  grepl(file_convention, subjects_specified)
-
-
   # Initialize lists to store results
   subjects_present <- c()
   edge_df_list <- list()
@@ -108,6 +105,9 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
 
   # Combine individual matrices into a 3D array
   matrix_df <- abind(matrices_list, along = 3)
+
+  # Validate matrices within array
+  apply(matrix_df, MARGIN = 3, FUN = validate_matrix)
 
   # Combine individual subject edge dataframes into one
   if (output_edge==TRUE){

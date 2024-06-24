@@ -4,11 +4,13 @@
 \alias{network_density}
 \title{Calculate Network Density for an Undirected Network}
 \usage{
-network_density(W)
+network_density(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, numeric matrix representing a weighted connection matrix of the network.
 The matrix should be symmetric to represent an undirected network.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A single numeric value representing the network's density.

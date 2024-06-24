@@ -4,11 +4,13 @@
 \alias{local_clustering_coefficient_wei}
 \title{Calculate Local Clustering Coefficient for Weighted Undirected Networks}
 \usage{
-local_clustering_coefficient_wei(W)
+local_clustering_coefficient_wei(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, symmetric matrix representing the weighted undirected
 connection matrix of the network.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric vector containing the local clustering coefficient for

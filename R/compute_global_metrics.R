@@ -97,6 +97,9 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
     }
   }
 
+  # Validate matrices within array
+  apply(matrices_array, MARGIN = 3, FUN = validate_matrix)
+
   # Initialize a list to store results for each metric
   global <- list()
 
@@ -117,8 +120,8 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
 
       # Loop over each slice of the matrix array
       for (slice_idx in 1:dim(matrices_array)[3]) {
-        # Apply the metric function to the current slice
-        metric_results[[slice_idx]] <- get(metric_function)(matrices_array[,,slice_idx])
+        # av the metric function to the current slice
+        metric_results[[slice_idx]] <- get(metric_function)(matrices_array[,,slice_idx], FALSE)
 
         # Update progress
         update_progress(slice_idx, dim(matrices_array)[3],start_time, metric_name, max_nchar)
@@ -170,7 +173,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
       norm_clust <- lapply(combined_list, function(item) {
         slice_counter <<- slice_counter + 1
         # Apply the metric function to the current slice
-        result <- normalised_clustering_coefficient(list(item$original_matrix, item$associated_array))
+        result <- normalised_clustering_coefficient(list(item$original_matrix, item$associated_array), validate = FALSE)
 
         # Update progress for normalised_clustering_coefficient
         update_progress(slice_counter, dim(matrices_array)[3], start_time_metrics, "normalised_clustering_coefficient", max_nchar)
@@ -185,7 +188,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
       norm_cpl <- lapply(combined_list, function(item) {
         slice_counter <<- slice_counter + 1
         # Apply the metric function to the current slice
-        result <- normalised_characteristic_path_length(list(item$original_matrix, item$associated_array))
+        result <- normalised_characteristic_path_length(list(item$original_matrix, item$associated_array), validate = FALSE)
 
         # Update progress for normalised_characteristic_path_length
         update_progress(slice_counter, dim(matrices_array)[3], start_time_metrics, "normalised_characteristic_path_length", max_nchar)

@@ -4,11 +4,13 @@
 \alias{characteristic_path_length}
 \title{Calculate the Characteristic Path Length of a Graph}
 \usage{
-characteristic_path_length(W)
+characteristic_path_length(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square matrix adjacency matrix, where edges represent connection
 strength.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 The characteristic path length of the graph as a single

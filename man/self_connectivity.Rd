@@ -4,10 +4,12 @@
 \alias{self_connectivity}
 \title{Calculate Self-Connection Weights from a Network Matrix}
 \usage{
-self_connectivity(W)
+self_connectivity(W, validate = TRUE)
 }
 \arguments{
-\item{W}{A square, numeric matrix representing a weighted connection matrix of the network.
+\item{W}{A square, numeric matrix representing a weighted connection matrix of the network.}
+
+\item{validate}{Whether to validate the input matrix.
 Self-connections are represented by the diagonal elements of this matrix.}
 }
 \value{

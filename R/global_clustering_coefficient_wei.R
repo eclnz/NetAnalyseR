@@ -8,15 +8,16 @@
 #'
 #' @param W A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 #'          The matrix should have non-negative weights, and diagonal elements are ignored in the computation.
+#' @param validate Whether to validate the input matrix.
 #' @return A numeric value representing the global clustering coefficient of the graph.
 #' @examples
 #' # Example: Create a 3x3 weighted adjacency matrix
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' global_clustering_coefficient_wei(W)
 #' @export
-global_clustering_coefficient_wei <- function(W) {
+global_clustering_coefficient_wei <- function(W, validate = TRUE) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
-  validate_matrix(W) # Check if matrix is valid
+  if(validate){validate_matrix(W)} # Check if matrix is valid
   # Remove self-loops by setting diagonal elements to zero
   Cl = mean(localClusteringCoefficientWei(W))
   # Return the global clustering coefficient

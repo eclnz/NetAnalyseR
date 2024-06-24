@@ -4,12 +4,14 @@
 \alias{threshold_density}
 \title{Threshold Density Function}
 \usage{
-threshold_density(mat, target_density)
+threshold_density(mat, target_density, validate = TRUE)
 }
 \arguments{
 \item{mat}{A numeric matrix representing the network.}
 
 \item{target_density}{A numeric value indicating the target density.}
+
+\item{validate}{A bool whether to validate the input matrix.}
 }
 \value{
 A list containing the thresholded matrix (\code{matrix}), the applied threshold (\code{threshold}), and the resulting density (\code{density}).

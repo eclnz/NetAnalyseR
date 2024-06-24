@@ -4,10 +4,12 @@
 \alias{betweenness_wei}
 \title{Calculate Betweenness Centrality for Weighted Networks}
 \usage{
-betweenness_wei(W)
+betweenness_wei(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square numeric matrix representing the weighted network, where higher weights imply stronger connections.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric vector containing the betweenness centrality for each node in the network.

@@ -11,6 +11,7 @@
 #' If provided as a list, the first element should be the matrix, and the second element (if present) should be the array of randomized matrices.
 #' If a single matrix is provided and no array of randomized matrices is given, a set of randomized matrices is generated.
 #' @param rand_array An optional 3D array of randomized matrices for comparison if the input is a single matrix. If NULL and the input is a matrix,
+#' @param validate Whether to validate the input matrix.
 #' a set of randomized matrices is generated. This parameter is ignored if the input is a list.
 #' @return The normalized clustering coefficient, computed as the ratio of the clustering coefficient of the input matrix to the average clustering
 #' coefficient of the randomized matrices. Returns 0 if the global clustering coefficient of the input is 0 to prevent division by zero errors.
@@ -28,16 +29,16 @@
 #' @export
 
 
-normalised_clustering_coefficient <- function(mat_list, rand_array = NULL) {
+normalised_clustering_coefficient <- function(mat_list, rand_array = NULL, validate = TRUE) {
 
   if(is.matrix(mat_list)){
-    validate_matrix(mat_list)
-    if(network_density(mat_list)==1){
+    if(validate){validate_matrix(mat_list)}
+    if(network_density(mat_list, FALSE)==1){
       warning("Network density is equal to 1. Network cannot be rewired while maintaining degree distribution\n
               This may make results incorrect.")
     }
     # If the global clustering coefficient is 0 then the normalised clustering coefficient will be 0 and math errors will be created by 0 division.
-    if(global_clustering_coefficient_wei(mat_list)==0){
+    if(global_clustering_coefficient_wei(mat_list, FALSE)==0){
       return(0)
     }
     # Generate randomized matrices if not provided
@@ -50,9 +51,9 @@ normalised_clustering_coefficient <- function(mat_list, rand_array = NULL) {
       stop("Random array specified is not in the form of an array")
     }
     # Calculate the average clustering coefficient for the random array
-    rand_c <- mean(apply(rand_array, MARGIN = 3, FUN = global_clustering_coefficient_wei))
+    rand_c <- mean(apply(rand_array, MARGIN = 3, FUN = function(x) global_clustering_coefficient_wei(x, FALSE)))
     # Calculate the clustering coefficient for the input matrix
-    c <- global_clustering_coefficient_wei(mat_list)
+    c <- global_clustering_coefficient_wei(mat_list, FALSE)
     # Normalize the clustering coefficient by the random array's average
     norm_c <- c / rand_c
     return(norm_c)
@@ -63,7 +64,7 @@ normalised_clustering_coefficient <- function(mat_list, rand_array = NULL) {
               This may make results incorrect.")
     }
     # If the global clustering coefficient is 0 then the normalised clustering coefficient will be 0 and mat_list[[1]]h errors will be created by 0 division.
-    if(global_clustering_coefficient_wei(mat_list[[1]])==0){
+    if(global_clustering_coefficient_wei(mat_list[[1]],FALSE)==0){
       return(0)
     }
     # Validate that rand_array is indeed an array
@@ -71,9 +72,9 @@ normalised_clustering_coefficient <- function(mat_list, rand_array = NULL) {
       stop("Random array specified is not in the form of an array")
     }
     # Calculate the average clustering coefficient for the random array
-    rand_c <- mean(apply(mat_list[[2]], MARGIN = 3, FUN = global_clustering_coefficient_wei))
+    rand_c <- mean(apply(mat_list[[2]], MARGIN = 3, FUN = function(x) global_clustering_coefficient_wei(x, FALSE)))
     # Calculate the clustering coefficient for the input matrix
-    c <- global_clustering_coefficient_wei(mat_list[[1]])
+    c <- global_clustering_coefficient_wei(mat_list[[1]], FALSE)
     # Normalize the clustering coefficient by the random array's average
     norm_c <- c / rand_c
     return(norm_c)

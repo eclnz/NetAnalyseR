@@ -4,11 +4,13 @@
 \alias{node_strength}
 \title{Calculate the Strength of Nodes in an Undirected Network}
 \usage{
-node_strength(W)
+node_strength(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, numeric matrix representing an undirected, weighted connection matrix of the network.
 The elements of the matrix represent the weights of the edges between nodes. The matrix must be symmetric.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric vector containing the strength of each node.

@@ -4,11 +4,13 @@
 \alias{local_efficiency_wei}
 \title{Calculate the Local Efficiency of a Weighted Graph}
 \usage{
-local_efficiency_wei(W)
+local_efficiency_wei(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 Weights should be non-negative, and diagonal elements (self-loops) are ignored.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric vector of length equal to the number of nodes in the graph, where each element represents
