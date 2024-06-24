@@ -65,10 +65,11 @@ allocate_groups <- function(data_frame, grouping_list) {
 #' @return A symmetric matrix with dimensions `dim` x `dim`.
 #' @examples
 #' mat <- mat_gen(5)
+#' @importFrom stats rnorm
 #' @export
 mat_gen <- function(dim) {
   # Generate a matrix with absolute random normal values
-  mat <- matrix(abs(rnorm(dim * dim, mean = 0, sd = 100)), nrow = dim, ncol = dim)
+  mat <- matrix(abs(stats::rnorm(dim * dim, mean = 0, sd = 100)), nrow = dim, ncol = dim)
 
   # Make the matrix symmetric
   mat[upper.tri(mat)] <- t(mat)[upper.tri(mat)]
@@ -116,6 +117,7 @@ threshold_mat <- function(mat, threshold) {
 #' @param total_slices Integer specifying the total number of matrices to process.
 #' @param start_time POSIXct object indicating the start time of the processing.
 #' @param metric_name Character string specifying the name of the metric being processed.
+#' @param max_metric_length Integer specifying the maximum length of metric names. Adds padding to help visually align all messages.
 #' @return None. Prints progress information to the console.
 #' @examples
 #' \dontrun{
@@ -125,6 +127,7 @@ threshold_mat <- function(mat, threshold) {
 #'   update_progress(i, 100, start_time, "Example Metric")
 #' }
 #' }
+#' @importFrom utils flush.console
 #' @export
 update_progress <- function(slice_counter, total_slices, start_time, metric_name, max_metric_length) {
   current_time <- Sys.time()
@@ -132,8 +135,6 @@ update_progress <- function(slice_counter, total_slices, start_time, metric_name
   rate <- slice_counter / elapsed_time
   remaining_slices <- total_slices - slice_counter
   estimated_remaining_time <- remaining_slices / rate
-  finish_time <- current_time + estimated_remaining_time
-  finish_time_formatted <- format(finish_time, "%Y-%m-%d %H:%M:%S")
 
   # Format remaining time as minutes and seconds
   remaining_time_formatted <- ifelse(estimated_remaining_time >= 60,
@@ -147,9 +148,9 @@ update_progress <- function(slice_counter, total_slices, start_time, metric_name
   padding <- paste0(rep(" ", max_metric_length - nchar(metric_name)), collapse = "")
 
   cat(sprintf(
-    "\rMetric %s%s: Completed %d of %d slices | Elapsed: %.2f s | Remaining: %s | ETA: %s",
-    metric_name, padding, slice_counter, total_slices, elapsed_time, remaining_time_formatted, finish_time_formatted))
+    "\rMetric %s%s: Completed %d of %d slices | Elapsed: %.2f s | Remaining: %s",
+    metric_name, padding, slice_counter, total_slices, elapsed_time, remaining_time_formatted))
 
-  flush.console()
+  utils::flush.console()
 }
 

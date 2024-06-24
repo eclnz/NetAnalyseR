@@ -20,6 +20,8 @@ update_progress(
 \item{start_time}{POSIXct object indicating the start time of the processing.}
 
 \item{metric_name}{Character string specifying the name of the metric being processed.}
+
+\item{max_metric_length}{Integer specifying the maximum length of metric names. Adds padding to help visually align all messages.}
 }
 \value{
 None. Prints progress information to the console.
@@ -28,9 +30,11 @@ None. Prints progress information to the console.
 Displays the progress of processing matrices, including elapsed time, remaining time, and estimated time of completion.
 }
 \examples{
+\dontrun{
 start_time <- Sys.time()
 for (i in 1:100) {
   Sys.sleep(0.1)
-  update_progress(i, 100, start_time, "Example Metric", 0)
+  update_progress(i, 100, start_time, "Example Metric")
+}
 }
 }
