@@ -59,6 +59,7 @@ process_matrices <- function(directory, subjects_specified=NULL, file_convention
   for (subj in subjects_specified) {
     # Construct file path from directory, subject ID, and file convention
     file_path <- file.path(directory, subj)
+    subj <- gsub(file_convention, '', subj)
 
     if (!file.exists(file_path)) {
       warning("Missing file for subject: ", subj)
