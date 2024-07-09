@@ -27,7 +27,8 @@ Imports:
     cowplot,
     ggsignif,
     car,
-    utils
+    utils,
+    dunn.test
 LinkingTo: 
     Rcpp,
     RcppArmadillo

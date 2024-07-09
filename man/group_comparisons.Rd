@@ -10,7 +10,11 @@ group_comparisons(
   comparisons,
   p_adjust_method = "BH",
   group_order = NULL,
-  test_type = NULL
+  test_type = NULL,
+  num_permutations = 1000,
+  analysis_type = "between",
+  id_var = NULL,
+  time_var = NULL
 )
 }
 \arguments{
