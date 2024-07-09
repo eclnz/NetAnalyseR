@@ -8,7 +8,7 @@ group_statistics_plots(
   group_df,
   metrics,
   comparisons,
-  t_test_results_list,
+  stats_results,
   group_order = NULL
 )
 }
@@ -19,9 +19,9 @@ group_statistics_plots(
 
 \item{comparisons}{List of pairwise group comparisons for significance annotations.}
 
-\item{t_test_results_list}{List of t-test or Wilcoxon test results with adjusted p-values.}
-
 \item{group_order}{Optional character vector specifying the order of groups.}
+
+\item{t_test_results_list}{List of t-test or Wilcoxon test results with adjusted p-values.}
 }
 \value{
 A combined plot with significance annotations for each metric.
