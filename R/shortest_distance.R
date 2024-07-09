@@ -10,6 +10,7 @@
 #' @param L A numeric matrix representing the lengths or distances between nodes in the graph.
 #' The matrix should be square, with dimensions N x N, where N is the number of nodes. Each
 #' connection represents the distance from node i to node j.
+#' @param validate Whether to validate the input matrix.
 #' @return A matrix of the same dimension as L, where each connection represents the
 #' shortest distance from node i to node j in the graph. If a node is unreachable, the distance
 #' is set to 0.
@@ -20,15 +21,17 @@
 #'
 #' @export
 #'
-shortest_distance <- function(L) {
+shortest_distance <- function(L, validate = TRUE) {
   # Check input matrix
-  L <- validate_matrix(L)
+  if(validate){
+    validate_matrix(L)
+  }
 
   # Initialize the distance matrix and set diagonal distances to zero
   diag(L) <- 0 # Self-distances are always zero
 
   # Depending on network characteristics calculate shortest distance differently.
-  if(network_density(L)>0.55){
+  if(network_density(L, FALSE)>0.55){
     D <- floydWarshallRcpp(L) # When Network Density is high, FloydWarshall algorithm is faster.
   } else {
     D <- dijkstraAllPairs(L) # When Network Density is low, dijkstraAllPairs is faster.

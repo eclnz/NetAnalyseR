@@ -4,11 +4,13 @@
 \alias{intra_node}
 \title{Calculate the Total Weight of Self-Connections in a Network}
 \usage{
-intra_node(W)
+intra_node(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, numeric matrix representing a weighted connection matrix of the network.
 Self-connections are represented by the diagonal elements of the matrix.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A single numeric value representing the sum of weights of all self-connections in the network.

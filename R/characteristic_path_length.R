@@ -9,6 +9,7 @@
 #'
 #' @param W A square matrix adjacency matrix, where edges represent connection
 #'          strength.
+#' @param validate Whether to validate the input matrix.
 #' @return The characteristic path length of the graph as a single
 #'         numerical value. This represents the average shortest path
 #'         length between all pairs of nodes.
@@ -18,10 +19,11 @@
 #' characteristic_path_length(W)
 #' @export
 #'
-characteristic_path_length <- function(W) {
+characteristic_path_length <- function(W, validate = TRUE) {
   # Ensure the input matrix is valid for the operation
-  W <- validate_matrix(W) # Check if the matrix is valid
-
+  if(validate){
+    W <- validate_matrix(W) # Check if the matrix is valid
+  }
   # Set diagonal elements to zero to ignore self-paths in calculations
   diag(W) <- 0
 
@@ -29,19 +31,15 @@ characteristic_path_length <- function(W) {
   n <- nrow(W)
 
   # Calculate lengths
-  L <- length_inversion(W)
+  L <- length_inversion(W, FALSE)
 
   # Calculate shortest distance between nodes
-  D <- shortest_distance(L)
+  D <- shortest_distance(L, FALSE)
 
-  # Replace infinite distances with NA to ignore them in the mean calculation
-  D[is.infinite(D)] <- NA
+  # Replace infinite distances with NA to ignore them. This only occurs in disconnected networks. No disconnected networks should occur when already validated.
+  if(validate){D[is.infinite(D)] <- NA}
 
-  # Extract all valid (non-NA) distances from the matrix
-  Dv <- D[!is.na(D)]
-
-  # Calculate the mean of all valid distances as the characteristic path length
-  lambda <- mean(Dv)
+  lambda <- mean(D[lower.tri(D)])
 
   # Return the characteristic path length
   return(lambda)

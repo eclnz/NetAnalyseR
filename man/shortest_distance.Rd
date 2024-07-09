@@ -4,12 +4,14 @@
 \alias{shortest_distance}
 \title{Calculate the Shortest Path Between Nodes in a Graph}
 \usage{
-shortest_distance(L)
+shortest_distance(L, validate = TRUE)
 }
 \arguments{
 \item{L}{A numeric matrix representing the lengths or distances between nodes in the graph.
 The matrix should be square, with dimensions N x N, where N is the number of nodes. Each
 connection represents the distance from node i to node j.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A matrix of the same dimension as L, where each connection represents the

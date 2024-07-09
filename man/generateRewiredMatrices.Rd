@@ -15,10 +15,8 @@ generateRewiredMatrices(initialMatrix, n = 100L)
 A list of 'n' rewired matrices.
 }
 \description{
-Starts with an initial network matrix, performs an initial 100 edge rewirings,
-and then continues to rewire the network with 1 iteration for each subsequent step,
-saving the state of the matrix after each single rewiring. This process is repeated
-until 'n' rewired matrices are generated.
+Rewires a matrix n times, performing 10 iterations each time.
+Saves all random matrices generated as a list.
 The output is in the format of a list. If manually using the output in normalised mesures
 the output must be converted to an array with \code{abind::abind(matrix, along = 3)}
 }

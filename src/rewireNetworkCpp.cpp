@@ -13,14 +13,15 @@ using namespace Rcpp;
 //' This function takes a network represented as an adjacency matrix and
 //' performs a specified number of edge rewiring iterations to randomize the network.
 //' It checks for network density and skips rewiring if the network is fully connected.
-//'
+//' @name rewireNetworkCpp
 //' @param R A numeric matrix representing the network's adjacency matrix.
-//' @param initialIter The number of iterations for the rewiring process.
+//' @param initialIter int number of iterations for the rewiring process.
+//' @param validate bool specifying whether to check the validity of the input matrix
 //'
 //' @return A rewired numeric matrix representing the network's adjacency matrix.
 //' @export
 // [[Rcpp::export]]
-NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
+NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter = 2, bool validate = true) {
     int n = R.nrow(); // Size of the matrix
     std::vector<int> i, j;
     int K = 0; // Count of edges
@@ -52,10 +53,12 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
     }
     
     // Calculate network density
-    double density = 2 * K / static_cast<double>(n * (n - 1));
-    if (density == 1) {
-        // Network density is 1. Rewiring is not possible.
-        return R; // Return the original matrix unmodified
+    if(validate){
+        double density = 2 * K / static_cast<double>(n * (n - 1));
+        if (density == 1) {
+            // Network density is 1. Rewiring is not possible.
+            return R; // Return the original matrix unmodified
+        }
     }
     
     int ITER = K * initialIter;
@@ -103,12 +106,11 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
 
 //' Generate a Series of Rewired Matrices
 //'
-//' Starts with an initial network matrix, performs an initial 100 edge rewirings,
-//' and then continues to rewire the network with 1 iteration for each subsequent step,
-//' saving the state of the matrix after each single rewiring. This process is repeated
-//' until 'n' rewired matrices are generated.
+//' Rewires a matrix n times, performing 10 iterations each time.
+//' Saves all random matrices generated as a list.
 //' The output is in the format of a list. If manually using the output in normalised mesures
 //' the output must be converted to an array with `abind::abind(matrix, along = 3)`
+//' @name generateRewiredMatrices
 //' @param initialMatrix A numeric matrix representing the initial network's adjacency matrix.
 //' @param n The number of rewired matrices to generate.
 //'
@@ -116,20 +118,19 @@ NumericMatrix rewireNetworkCpp(NumericMatrix R, int initialIter) {
 //' @export
 // [[Rcpp::export]]
 std::vector<NumericMatrix> generateRewiredMatrices(NumericMatrix initialMatrix, int n = 100) {
-    // Vector to hold the matrices
+    // Preallocate the vector to hold the matrices
     std::vector<NumericMatrix> matrices;
+    matrices.reserve(n);
     
-    // Add the initial matrix to the vector after 100 rewirings
-    NumericMatrix matrix = clone(initialMatrix); // Clone to avoid modifying the original matrix
-    matrix = rewireNetworkCpp(matrix, 100); // Rewire 100 times initially
-    matrices.push_back(clone(matrix)); // Save the initial rewired matrix
-    
-    // Now, rewire 1 iteration at a time and save each result
-    for(int i = 1; i < n; ++i) {
-        matrix = rewireNetworkCpp(matrix, 1); // Rewire 1 time
-        matrices.push_back(clone(matrix)); // Save the matrix after each rewiring
+    // Clone the initial matrix to avoid modifying the original
+    NumericMatrix matrix = clone(initialMatrix);
+
+    // Generate the remaining n-1 networks
+    for (int i = 0; i < n; ++i) {
+        // Perform 10 rewiring iterations for each network
+        matrix = rewireNetworkCpp(matrix, 2, false); // Perform 2 rewirings in each iteration
+        matrices.push_back(matrix); // Save the matrix after every 10 rewirings
     }
     
     return matrices;
 }
-

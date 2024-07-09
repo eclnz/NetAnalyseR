@@ -4,11 +4,13 @@
 \alias{global_efficiency_wei}
 \title{Calculate Global Efficiency of a Weighted Graph}
 \usage{
-global_efficiency_wei(W)
+global_efficiency_wei(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 Weights should be non-negative, and diagonal elements (self-loops) are ignored in the calculation.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A numeric value representing the global efficiency of the graph.

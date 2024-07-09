@@ -4,12 +4,14 @@
 \alias{missing_weights}
 \title{Calculate Missing Weights in a Network}
 \usage{
-missing_weights(W)
+missing_weights(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A matrix representing the network, where rows and columns correspond to
 nodes, and the matrix elements represent the weight of the connections between
 these nodes.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 The calculated missing weights in the network.
@@ -23,5 +25,6 @@ weights from the total.
 }
 \examples{
 # Example matrix representing weighted connections between nodes
-W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)#' missing_weights(W)
+W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
+missing_weights(W)
 }

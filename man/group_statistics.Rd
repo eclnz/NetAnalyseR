@@ -2,7 +2,7 @@
 % Please edit documentation in R/group_comparisons.R
 \name{group_statistics}
 \alias{group_statistics}
-\title{Group Statistics for Metrics with Parametric and Nonparametric Tests}
+\title{Group Statistics Function}
 \usage{
 group_statistics(
   group_df,
@@ -10,25 +10,34 @@ group_statistics(
   comparisons,
   p_adjust_method = "BH",
   test_type = NULL,
-  num_permutations = 1000
+  num_permutations = 1000,
+  analysis_type = "between",
+  id_var = NULL,
+  time_var = NULL
 )
 }
 \arguments{
-\item{group_df}{Data frame containing 'subject', 'group', and metric columns.}
+\item{group_df}{Data frame containing the data to be analyzed, including grouping variables.}
 
-\item{metrics}{Character vector of metric column names to analyze.}
+\item{metrics}{Character vector of metric names to be analyzed.}
 
-\item{comparisons}{List of pairwise group comparisons for t-tests or Wilcoxon tests.}
+\item{comparisons}{List of group comparisons to be performed.}
 
-\item{p_adjust_method}{Character string specifying the p-value adjustment method (default is "BH").}
+\item{p_adjust_method}{Method for p-value adjustment (default is "BH").}
 
-\item{test_type}{Character string specifying "parametric", "nonparametric" or "permutation" (optional). If NULL, parametric or nonparametric test type is determined by Shapiro-Wilk and Levene's tests. Permutation testing utilises nonparametric testing.}
+\item{test_type}{Type of test to be used (parametric, nonparametric, or permutation). If NULL, it will be determined based on data.}
 
-\item{num_permutations}{Integer specifying the number of permutations to perform.}
+\item{num_permutations}{Number of permutations for permutation test (default is 1000).}
+
+\item{analysis_type}{Type of analysis: "between" for between-group comparisons, "within" for within-subject comparisons.}
+
+\item{id_var}{Identifier variable for within-subject comparisons.}
+
+\item{time_var}{Time variable for within-subject comparisons.}
 }
 \value{
-A list with test results, pairwise test results, and normality and homogeneity test results.
+List containing test results, post-hoc comparisons, and normality/homogeneity test results.
 }
 \description{
-Performs ANOVA or Kruskal-Wallis tests on specified metrics across groups, adjusting p-values and considering normality and homogeneity.
+Performs statistical analysis on grouped data, including normality tests, homogeneity tests, and post-hoc comparisons.
 }

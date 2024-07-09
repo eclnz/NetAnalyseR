@@ -4,10 +4,12 @@
 \alias{length_inversion}
 \title{Convert Matrix Weights to Lengths}
 \usage{
-length_inversion(W)
+length_inversion(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A numeric matrix whose weights represent connection strengths.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A matrix where each non-zero weight has been converted to its reciprocal value, representing the length.

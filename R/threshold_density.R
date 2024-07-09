@@ -3,6 +3,7 @@
 #'
 #' @param mat A numeric matrix representing the network.
 #' @param target_density A numeric value indicating the target density.
+#' @param validate A bool whether to validate the input matrix.
 #'
 #' @return A list containing the thresholded matrix (`matrix`), the applied threshold (`threshold`), and the resulting density (`density`).
 #'
@@ -13,9 +14,9 @@
 #' image(result)
 #'
 #' @export
-threshold_density <- function(mat, target_density) {
+threshold_density <- function(mat, target_density, validate = TRUE) {
   # Validate input matrix
-  validate_matrix(mat)
+  if(validate){validate_matrix(mat)}
 
   # Apply threshold to matrix
   threshold_mat <- function(mat, threshold) {

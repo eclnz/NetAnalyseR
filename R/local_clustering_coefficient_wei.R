@@ -9,6 +9,7 @@
 #'
 #' @param W A square, symmetric matrix representing the weighted undirected
 #'          connection matrix of the network.
+#' @param validate Whether to validate the input matrix.
 #' @return A numeric vector containing the local clustering coefficient for
 #'         each node in the network.
 #' @examples
@@ -16,10 +17,10 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' local_clustering_coefficient_wei(W)
 #' @export
-local_clustering_coefficient_wei<- function(W) {
+local_clustering_coefficient_wei<- function(W, validate = TRUE) {
   # Ensure W is a valid matrix and convert it to matrix form if necessary
-  validate_matrix(W)
-  # Zero out the diagonal to ignore self-loops
+  if(validate){validate_matrix(W)}
+  # Call C++ function
   C <- localClusteringCoefficientWei(W)
   # Return the vector of clustering coefficients
   return(C)

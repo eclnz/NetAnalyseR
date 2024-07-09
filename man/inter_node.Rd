@@ -4,11 +4,13 @@
 \alias{inter_node}
 \title{Calculate the Total Inter-Node Connections in a Network}
 \usage{
-inter_node(W)
+inter_node(W, validate = TRUE)
 }
 \arguments{
 \item{W}{A square, numeric matrix representing a weighted connection matrix of the network.
 The matrix should represent an undirected network, meaning connections are symmetric.}
+
+\item{validate}{Whether to validate the input matrix.}
 }
 \value{
 A single numeric value representing the sum of weights of all unique inter-node connections.
