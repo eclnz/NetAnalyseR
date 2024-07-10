@@ -12,6 +12,7 @@
 #' @importFrom stats TukeyHSD as.formula friedman.test kruskal.test t.test wilcox.test
 #' @importFrom dunn.test dunn.test
 #' @importFrom utils combn
+#' @importFrom dplyr mutate_if
 #' @return List containing test results, post-hoc comparisons, and normality/homogeneity test results.
 
 group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "BH", test_type = NULL, num_permutations = 1000, analysis_type = "between", id_var = NULL, time_var = NULL) {
@@ -190,7 +191,7 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
   for (metric in metrics) {
     formula <- as.formula(paste(metric, "~ group"))
 
-    metric_group_df <- group_df %>% mutate_if(is.factor, droplevels)
+    metric_group_df <- group_df %>% dplyr::mutate_if(is.factor, droplevels)
 
 
     if (analysis_type == "within") {
@@ -249,6 +250,8 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
 #' @importFrom ggplot2 ggplot
 #' @importFrom ggsignif geom_signif
 #' @importFrom cowplot ggdraw draw_plot draw_label
+#' @importFrom stringr str_to_title
+#' @importFrom gridExtra grid.arrange
 #' @export
 group_statistics_plots <- function(group_df, metrics, comparisons, stats_results, group_order = NULL) {
   plot_list <- list()
@@ -256,7 +259,7 @@ group_statistics_plots <- function(group_df, metrics, comparisons, stats_results
   transform_metric_name <- function(name) {
     name <- gsub("_wei$", "", name)  # Remove '_wei' at the end
     name <- gsub("_", " ", name)     # Replace underscores with spaces
-    name <- str_to_title(name)       # Capitalize
+    name <- stringr::str_to_title(name)       # Capitalize
     return(name)
   }
 
