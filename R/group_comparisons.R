@@ -307,8 +307,10 @@ group_statistics_plots <- function(group_df, metrics, comparisons, stats_results
 
     plot_list[[metric]] <- plot_with_title
   }
-
-  combined_plot <- do.call(grid.arrange, c(plot_list, ncol = length(metrics)))
+  if(length(plot_list)>1){
+    combined_plot <- do.call(grid.arrange, c(plot_list, ncol = length(metrics)))
+  }
+  else{combined_plot <- plot_list}
 
   return(combined_plot)
 }
@@ -369,12 +371,16 @@ group_comparisons <- function(group_df, metrics, comparisons, p_adjust_method = 
     group_df$group <- factor(group_df$group, levels = group_order)
   }
 
+  if (sum(duplicated(comparisons))>0) {
+    stop(paste("Non unique comparisons provided:",comparisons[duplicated(comparisons)]))
+  }
+
   stats_results <- group_statistics(group_df, metrics, comparisons, p_adjust_method, test_type, num_permutations, analysis_type, id_var, time_var)
   combined_plot <- group_statistics_plots(group_df, metrics, comparisons, stats_results, group_order)
 
   return(list(
     test_results = stats_results$test_results,
-    t_tests = stats_results$t_tests,
+    post_hoc_results = stats_results$post_hoc,
     normality_homogeneity = stats_results$normality_homogeneity,
     combined_plot = combined_plot
   ))
