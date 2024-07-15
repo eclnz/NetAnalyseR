@@ -1,6 +1,10 @@
 # NetAnalyseR
 
 An R package for producing graph theory metrics and other metrics from networks represented as adjacency matrices. Networks are processed in an automated pipeline format and are outputted as a .dataframe object to facilitate statistical analysis and graphing.
+### Features 
+- Streamlined adjacency matrix import with scan name parsing.
+- Automated global and nodal network metric calculation.
+- Automated statistical comparisons of network metrics between groups.
 
 ## Installation
 
