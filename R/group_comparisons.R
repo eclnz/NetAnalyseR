@@ -295,7 +295,7 @@ group_statistics_plots <- function(group_df, metrics, comparisons, stats_results
               map_signif_level = FALSE,
               textsize = 3,
               color = "slategray",
-              y_position = signif_y_position
+              y_position = signif_y_position + (i-1)*0.01*signif_y_position
             )
         }
       }
