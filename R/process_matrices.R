@@ -5,8 +5,8 @@
 #'   file existence, dimensions consistency, and generates an edge dataframe and an array of matrices.
 #'
 #' @param directory The path to the directory containing the matrix files.
-#' @param subjects_specified A vector of subject identifiers to be processed.
 #' @param file_convention The naming convention for the matrix files related to each subject.
+#' @param subjects_specified A vector of subject identifiers to be processed.
 #' @param output_edge A boolean whether to calculate and output a dataframe containing the edge strengths of all connections in all networks.
 #'
 #' @return A list containing three elements: 'edge_df' which is a dataframe of edge strengths between lower
@@ -27,7 +27,7 @@
 #'
 #' @export
 #'
-process_matrices <- function(directory, subjects_specified=NULL, file_convention, output_edge = FALSE) {
+process_matrices <- function(directory, file_convention, subjects_specified=NULL, output_edge = FALSE) {
   # Check if the specified directory exists
   if (!dir.exists(directory)) {
     stop("Directory does not exist: ", directory)

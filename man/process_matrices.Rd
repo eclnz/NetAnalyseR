@@ -6,17 +6,17 @@
 \usage{
 process_matrices(
   directory,
-  subjects_specified = NULL,
   file_convention,
+  subjects_specified = NULL,
   output_edge = FALSE
 )
 }
 \arguments{
 \item{directory}{The path to the directory containing the matrix files.}
 
-\item{subjects_specified}{A vector of subject identifiers to be processed.}
-
 \item{file_convention}{The naming convention for the matrix files related to each subject.}
+
+\item{subjects_specified}{A vector of subject identifiers to be processed.}
 
 \item{output_edge}{A boolean whether to calculate and output a dataframe containing the edge strengths of all connections in all networks.}
 }
