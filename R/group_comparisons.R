@@ -247,7 +247,7 @@ group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "
 #' @param t_test_results_list List of t-test or Wilcoxon test results with adjusted p-values.
 #' @param group_order Optional character vector specifying the order of groups.
 #' @return A combined plot with significance annotations for each metric.
-#' @importFrom ggplot2 ggplot
+#' @importFrom ggplot2 ggplot aes geom_boxplot geom_jitter labs scale_x_discrete theme_minimal theme unit
 #' @importFrom ggsignif geom_signif
 #' @importFrom cowplot ggdraw draw_plot draw_label
 #' @importFrom stringr str_to_title
@@ -273,14 +273,14 @@ group_statistics_plots <- function(group_df, metrics, comparisons, stats_results
 
     signif_y_position <- y_max + ((y_max - y_min)* 0.02)
 
-    plot <- ggplot(filtered_df, aes(x = group, y = .data[[metric]], color = group)) +
-      geom_boxplot(outlier.shape = NA) +
-      geom_jitter(width = 0.2, alpha = 0.6) +
-      labs(title = NULL, y = y_label, x = NULL) +
-      scale_x_discrete(labels = function(x) str_to_title(x)) +
-      theme_minimal() +
-      theme(legend.position = "none",
-            plot.margin = unit(c(2, 0.5, 0.5, 0.5), "lines"))
+    plot <- ggplot(filtered_df, ggplot2::aes(x = group, y = .data[[metric]], color = group)) +
+      ggplot2::geom_boxplot(outlier.shape = NA) +
+      ggplot2::geom_jitter(width = 0.2, alpha = 0.6) +
+      ggplot2::labs(title = NULL, y = y_label, x = NULL) +
+      ggplot2::scale_x_discrete(labels = function(x) str_to_title(x)) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(legend.position = "none",
+            plot.margin = ggplot2::unit(c(2, 0.5, 0.5, 0.5), "lines"))
 
     for (i in seq_along(comparisons)) {
       comparison <- comparisons[[i]]
