@@ -16,11 +16,12 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' local_efficiency_wei(W)
 #' @export
+#'
 local_efficiency_wei <- function(W, validate = TRUE) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
   if(validate){validate_matrix(W)}
   # Remove self-loops by setting diagonal elements to zero
-  diag(W) <- 0
+  # diag(W) <- 0
   # Determine if there is a connection (edge) between nodes
   isConnected <- W > 0
   # Number of nodes in the graph
@@ -35,7 +36,7 @@ local_efficiency_wei <- function(W, validate = TRUE) {
   cubeRootWeights <- W ^ cubeRootFactor
   cubeRootLengths <- lengths ^ cubeRootFactor
   # Ensure diagonal elements of cube root lengths are zero
-  diag(cubeRootLengths) <- 0
+  # diag(cubeRootLengths) <- 0
   for (node in 1:numNodes) {
     # Identify neighbors of the current node
     neighbors <- which(isConnected[node, ] | isConnected[, node])
