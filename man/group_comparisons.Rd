@@ -18,20 +18,26 @@ group_comparisons(
 )
 }
 \arguments{
-\item{group_df}{Data frame containing 'subject', 'group', and metric columns.}
+\item{group_df}{(Dataframe) containing 'subject', 'group', and metric columns.}
 
-\item{metrics}{Character vector of metric column names to analyze.}
+\item{metrics}{(Character) vector of metric column names to analyze.}
 
-\item{comparisons}{List of pairwise group comparisons for tests or 'all' to include all possible pairwise comparisons.}
+\item{comparisons}{(List) of pairwise group comparisons for tests or 'all' to include all possible pairwise comparisons.}
 
-\item{p_adjust_method}{Character string specifying the p-value adjustment method (default is "BH").}
+\item{p_adjust_method}{(Character) string specifying the p-value adjustment method (default is "BH").}
 
-\item{group_order}{Optional character vector specifying the order of groups.}
+\item{group_order}{Optional (Character) vector specifying the order of groups.}
 
-\item{test_type}{Character string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by normality and homogeneity tests.}
+\item{test_type}{(Character) string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by normality and homogeneity tests.}
+
+\item{num_permutations}{(Integer) specifying how many iterations should be used for the permuation test.}
+
+\item{id_var}{(Character) The variable which groups observations into a single entity.}
+
+\item{time_var}{(Character) The variable which delineates observations within a single entity.}
 }
 \value{
-A list with overall test results, pairwise test results, normality and homogeneity results, and a combined plot.
+(List) with overall test results, pairwise test results, normality and homogeneity results, and a combined plot.
 }
 \description{
 Performs statistical tests on specified metrics across groups, adjusting p-values and generating combined plots. Supports dynamic determination of test type.

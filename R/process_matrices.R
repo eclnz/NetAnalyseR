@@ -16,9 +16,8 @@
 #'
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' subjects <- c("A", "B", "C", "D")
 #' file_convention <- ".csv"
-#' process_matrices(data_dir, subjects, file_convention)
+#' process_matrices(data_dir, file_convention)
 #'
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
@@ -48,6 +47,8 @@ process_matrices <- function(directory, file_convention, subjects_specified=NULL
   if (length(file_convention)!=1){
     stop("File convention must have a length of 1: ", file_convention)
   }
+
+  # TODO: When the file convention doesn't match anything it needs to warn the user.
 
   # Initialize lists to store results
   subjects_present <- c()

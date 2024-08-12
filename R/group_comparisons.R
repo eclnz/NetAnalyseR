@@ -12,7 +12,7 @@
 #' @importFrom stats TukeyHSD as.formula friedman.test kruskal.test t.test wilcox.test
 #' @importFrom dunn.test dunn.test
 #' @importFrom utils combn
-#' @importFrom dplyr mutate_if
+#' @importFrom dplyr mutate_if sym
 #' @return List containing test results, post-hoc comparisons, and normality/homogeneity test results.
 
 group_statistics <- function(group_df, metrics, comparisons, p_adjust_method = "BH", test_type = NULL, num_permutations = 1000, analysis_type = "between", id_var = NULL, time_var = NULL) {
@@ -317,13 +317,16 @@ group_statistics_plots <- function(group_df, metrics, comparisons, stats_results
 
 #' @title Group Comparisons for Metrics with Dynamic Testing and Visualization
 #' @description Performs statistical tests on specified metrics across groups, adjusting p-values and generating combined plots. Supports dynamic determination of test type.
-#' @param group_df Data frame containing 'subject', 'group', and metric columns.
-#' @param metrics Character vector of metric column names to analyze.
-#' @param comparisons List of pairwise group comparisons for tests or 'all' to include all possible pairwise comparisons.
-#' @param p_adjust_method Character string specifying the p-value adjustment method (default is "BH").
-#' @param group_order Optional character vector specifying the order of groups.
-#' @param test_type Character string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by normality and homogeneity tests.
-#' @return A list with overall test results, pairwise test results, normality and homogeneity results, and a combined plot.
+#' @param group_df (Dataframe) containing 'subject', 'group', and metric columns.
+#' @param metrics (Character) vector of metric column names to analyze.
+#' @param comparisons (List) of pairwise group comparisons for tests or 'all' to include all possible pairwise comparisons.
+#' @param p_adjust_method (Character) string specifying the p-value adjustment method (default is "BH").
+#' @param group_order Optional (Character) vector specifying the order of groups.
+#' @param test_type (Character) string specifying "parametric" or "nonparametric" (optional). If NULL, test type is determined by normality and homogeneity tests.
+#' @param num_permutations (Integer) specifying how many iterations should be used for the permuation test. 
+#' @param id_var (Character) The variable which groups observations into a single entity. 
+#' @param time_var (Character) The variable which delineates observations within a single entity.
+#' @return (List) with overall test results, pairwise test results, normality and homogeneity results, and a combined plot.
 #' @export
 group_comparisons <- function(group_df, metrics, comparisons, p_adjust_method = "BH", group_order = NULL, test_type = NULL, num_permutations = 1000, analysis_type = "between", id_var = NULL, time_var = NULL) {
   # All unique levels of comparison

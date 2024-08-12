@@ -50,9 +50,8 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' @return A data frame that joins the input data_frame with computed network deviations for each case.
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' subjects <- c("A", "B", "C", "D")
 #' file_convention <- ".csv"
-#' output <- process_matrices(data_dir, subjects, file_convention)
+#' output <- process_matrices(data_dir, file_convention)
 #' global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
 #' global_df <- compute_global_metrics(matrices_array = output$matrices,
 #'                                     global_metrics = global_metrics,
@@ -157,9 +156,8 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
 #' @return A modified version of the original data frame that includes nodal deviation calculations for each subject.
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
-#' subjects <- c("A", "B", "C", "D")
 #' file_convention <- ".csv"
-#' output <- process_matrices(data_dir, subjects, file_convention)
+#' output <- process_matrices(data_dir, file_convention)
 #' nodal_metrics <- c("local_efficiency_wei")
 #' nodal_df <- compute_nodal_metrics(output$matrices, nodal_metrics, output$subjects)
 #' grouping_list <- list(

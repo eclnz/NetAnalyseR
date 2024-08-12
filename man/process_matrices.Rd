@@ -33,8 +33,7 @@ file existence, dimensions consistency, and generates an edge dataframe and an a
 }
 \examples{
 data_dir <- system.file("extdata", package = "NetAnalyseR")
-subjects <- c("A", "B", "C", "D")
 file_convention <- ".csv"
-process_matrices(data_dir, subjects, file_convention)
+process_matrices(data_dir, file_convention)
 
 }

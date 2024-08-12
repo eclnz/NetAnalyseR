@@ -33,9 +33,8 @@ Compute network deviations for a given dataset and matrices array
 }
 \examples{
 data_dir <- system.file("extdata", package = "NetAnalyseR")
-subjects <- c("A", "B", "C", "D")
 file_convention <- ".csv"
-output <- process_matrices(data_dir, subjects, file_convention)
+output <- process_matrices(data_dir, file_convention)
 global_metrics <- c("characteristic_path_length", "global_efficiency_wei")
 global_df <- compute_global_metrics(matrices_array = output$matrices,
                                     global_metrics = global_metrics,

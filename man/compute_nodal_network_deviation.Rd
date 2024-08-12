@@ -33,9 +33,8 @@ Compute nodal network deviations and merge with original data frame
 }
 \examples{
 data_dir <- system.file("extdata", package = "NetAnalyseR")
-subjects <- c("A", "B", "C", "D")
 file_convention <- ".csv"
-output <- process_matrices(data_dir, subjects, file_convention)
+output <- process_matrices(data_dir, file_convention)
 nodal_metrics <- c("local_efficiency_wei")
 nodal_df <- compute_nodal_metrics(output$matrices, nodal_metrics, output$subjects)
 grouping_list <- list(

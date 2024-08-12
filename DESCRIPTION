@@ -28,7 +28,8 @@ Imports:
     ggsignif,
     car,
     utils,
-    dunn.test
+    dunn.test,
+    gridExtra
 LinkingTo: 
     Rcpp,
     RcppArmadillo
