@@ -13,7 +13,7 @@
 #' node_strength(W)
 #' @export
 node_strength <- function(W, validate = TRUE) {
-  if(validate){validate_matrix(W)}
+  if(validate){W <- validate_matrix(W)}
   diag(W) <- 0 # Remove self-loops by setting the diagonal elements to zero
   node_strength <- colSums(W)
   return(node_strength)

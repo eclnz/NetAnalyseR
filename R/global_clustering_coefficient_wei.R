@@ -17,7 +17,7 @@
 #' @export
 global_clustering_coefficient_wei <- function(W, validate = TRUE) {
   # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
-  if(validate){validate_matrix(W)} # Check if matrix is valid
+  if(validate){W <- validate_matrix(W)} # Check if matrix is valid
   # Remove self-loops by setting diagonal elements to zero
   Cl = mean(localClusteringCoefficientWei(W))
   # Return the global clustering coefficient

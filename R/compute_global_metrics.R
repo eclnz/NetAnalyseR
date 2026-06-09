@@ -32,13 +32,12 @@
 #' @export
 
 compute_global_metrics <- function(matrices_array, global_metrics, density_val = NULL, target = NULL, subject_names = NULL) {
-  # If the user submits a single matrix the dimensions of the matrix as an array must be set.
-  if(is.na(dim(matrices_array)[3])){
-    dim(matrices_array)[3] <- 1
-  }
-
+  # Promote a plain 2D matrix to a 3D array; reject anything else
   if(!is.array(matrices_array)){
-    stop("Matrices array is not in array format")
+    if(!is.matrix(matrices_array)){
+      stop("Matrices array is not in array format")
+    }
+    dim(matrices_array)[3] <- 1
   }
   # If subject names is specified, stop if it is not character.
   if(!is.null(subject_names)){
@@ -200,7 +199,7 @@ compute_global_metrics <- function(matrices_array, global_metrics, density_val =
     }
 
     if ("small_worldness" %in% user_random_metrics) {
-      global_df$small_world <- norm_clust / norm_cpl
+      global_df$small_worldness <- norm_clust / norm_cpl
     }
   }
 

@@ -1,5 +1,5 @@
 rich_club <- function(W, klevel = NULL, validate = TRUE) {
-  if(validate){validate_matrix(W)}
+  if(validate){W <- validate_matrix(W)}
   NofNodes <- ncol(W)
   NodeDegree <- colSums(W != 0)
 
@@ -41,9 +41,7 @@ rich_club <- function(W, klevel = NULL, validate = TRUE) {
 
     Rw[kk] <- Wr / sum(wrank_r)
   }
-  while(length(Rw)<NofNodes){
-    Rw <- c(Rw,NA)
-  }
+  length(Rw) <- NofNodes
   return(Rw)
 }
 
@@ -69,9 +67,6 @@ norm_rich_club <- function(W, n_rand=100, rand_array = NULL, validate = TRUE){
 
 }
 
-
-grouping_list<- list(mTBI = "RUGLONG", rugby = c("Pre", "mid", "post"))
-grouping_list<- list(Preseason = "Pre", Postseason = "post")
 
 #' @title Rich Club Coefficient Comparison
 #' @description Computes and compares rich club coefficients for multiple subjects grouped by given criteria.
@@ -155,6 +150,7 @@ compare_rich_club <- function(mat_array,
     stop("There have been less than 2 groups allocated. Check the allocation list.")
   }
 
+  rich_plot <- NULL
   cat("Computing Statistics\n")
 
   permute_test <- function(data, n_perm = 100) {

@@ -14,7 +14,7 @@
 #' self_connectivity(W)
 #' @export
 self_connectivity <- function(W, validate = TRUE) {
-  if(validate){validate_matrix(W)} # Ensure the matrix is valid for analysis
+  if(validate){W <- validate_matrix(W)} # Ensure the matrix is valid for analysis
   # Each element on the diagonal is the weight of the self-connection for that node
   self_connections_weights <- diag(W)
   return(self_connections_weights)

@@ -18,7 +18,7 @@
 #' network_density(W)
 #' @export
 network_density <- function(W, validate = TRUE) {
-  if(validate){validate_matrix(W)} # Validate the input matrix
+  if(validate){W <- validate_matrix(W)} # Validate the input matrix
   diag(W) <- 0 # Set diagonal to zero to ignore self-connections
 
   # Convert the weighted connection matrix to a binary adjacency matrix

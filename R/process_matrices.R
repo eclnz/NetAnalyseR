@@ -31,27 +31,29 @@ process_matrices <- function(directory, file_convention, subjects_specified=NULL
   if (!dir.exists(directory)) {
     stop("Directory does not exist: ", directory)
   }
+
+  if (!is.character(file_convention)) {
+    stop("File convention must be supplied as a character: ", file_convention)
+  }
+  if (length(file_convention) != 1) {
+    stop("File convention must have a length of 1: ", file_convention)
+  }
+
   if(is.null(subjects_specified)){
     subjects_specified <- unique(list.files(directory, recursive=FALSE))
     subjects_specified <- subjects_specified[grepl(file_convention, subjects_specified)]
   } else{
-    subjects_specified <- paste0(subjects_specified,file_convention)
-  }
-  if (!is.character(subjects_specified) & !is.numeric(subjects_specified)){
+    if (!is.character(subjects_specified) && !is.numeric(subjects_specified)){
       stop("If specifying subjects, it must be supplied as a character or number: ", subjects_specified)
-  }
-
-  if (is.character(file_convention)!=TRUE){
-    stop("File convention must be supplied as a character: ", file_convention)
-  }
-  if (length(file_convention)!=1){
-    stop("File convention must have a length of 1: ", file_convention)
+    }
+    subjects_specified <- paste0(subjects_specified, file_convention)
   }
 
   # TODO: When the file convention doesn't match anything it needs to warn the user.
 
-  # Initialize lists to store results
-  subjects_present <- c()
+  # Initialize storage
+  subjects_present <- vector("character", length(subjects_specified))
+  valid_count <- 0L
   edge_df_list <- list()
   matrices_list <- list()
   expected_dims <- NULL
@@ -66,7 +68,8 @@ process_matrices <- function(directory, file_convention, subjects_specified=NULL
       warning("Missing file for subject: ", subj)
       next
     }
-    subjects_present <- c(subjects_present,subj)
+    valid_count <- valid_count + 1L
+    subjects_present[valid_count] <- subj
 
     cat("Processing subject: ", subj, "\n")
 
@@ -100,8 +103,10 @@ process_matrices <- function(directory, file_convention, subjects_specified=NULL
     edge_df_list[[subj]] <- subject_df
   }
 
+  subjects_present <- subjects_present[seq_len(valid_count)]
+
   # Ensure at least one file was processed
-  if (length(subjects_present) == 0) {
+  if (valid_count == 0L) {
     stop("No files were found for the subjects specified")
   }
 

@@ -13,7 +13,7 @@
 #' @export
 #'
 betweenness_wei <- function(W, validate = TRUE) {
-  if(validate){validate_matrix(W)}
+  if(validate){W <- validate_matrix(W)}
   diag(W) <- 0
   L <- length_inversion(W, FALSE)
 

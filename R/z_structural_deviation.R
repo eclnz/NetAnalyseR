@@ -79,7 +79,7 @@ compute_network_deviation <- function(data_frame, matrices_array, control_group,
   if(!(is.character(control_group) & length(control_group)==1)){
     stop("The control group specified must be a character string with a length of 1.", call. = FALSE)
   }
-  if(!any(length(data_frame$group==control_group))){
+  if(!any(data_frame$group == control_group)){
     stop("No observations of the control group ", control_group, " were found", call. = FALSE)
   }
   # Identify control and case indices based on the group column
@@ -183,7 +183,7 @@ compute_nodal_network_deviation <- function(data_frame, matrices_array, control_
   if(!(is.character(control_group) & length(control_group)==1)){
     stop("The control group specified must be a character string with a length of 1.", call. = FALSE)
   }
-  if(!any(length(data_frame$group==control_group))){
+  if(!any(data_frame$group == control_group)){
     stop("No observations of the control group ", control_group, " were found", call. = FALSE)
   }
   # Dataframe of controls not in long format (one row per subject the same as the matrices array)

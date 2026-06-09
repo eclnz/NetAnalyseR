@@ -16,18 +16,11 @@
 #' @export
 threshold_density <- function(mat, target_density, validate = TRUE) {
   # Validate input matrix
-  if(validate){validate_matrix(mat)}
+  if(validate){mat <- validate_matrix(mat)}
 
-  # Apply threshold to matrix
-  threshold_mat <- function(mat, threshold) {
+  # Apply threshold to matrix (strict: keeps values strictly above threshold)
+  threshold_mat_local <- function(mat, threshold) {
     return(as.numeric(mat > threshold) * mat)
-  }
-
-  # Calculate network density
-  network_density <- function(mat) {
-    num_edges <- sum(mat > 0)
-    num_possible_edges <- length(mat) - nrow(mat)  # for undirected networks
-    return(num_edges / num_possible_edges)
   }
 
   # Initial setup
@@ -39,8 +32,8 @@ threshold_density <- function(mat, target_density, validate = TRUE) {
 
   # Binary search for optimal threshold
   while (step_size > tolerance) {
-    mat_thr <- threshold_mat(mat, current_threshold)
-    current_density <- network_density(mat_thr)
+    mat_thr <- threshold_mat_local(mat, current_threshold)
+    current_density <- network_density(mat_thr, validate = FALSE)
 
     density_difference <- current_density - target_density
 

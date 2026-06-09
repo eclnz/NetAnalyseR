@@ -1,49 +1,54 @@
 //' @export
 
 #include <RcppArmadillo.h>
+#include <cmath>
 // [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
 using namespace arma;
 
-// Assuming floydWarshallRcpp is defined as follows:
 arma::mat floydWarshallRcpp(const arma::mat& graph);
 
 // [[Rcpp::export]]
 arma::vec localEfficiencyWei(const arma::mat& W_original) {
   arma::mat W = W_original;
-  W.diag().zeros(); // Remove self-loops
+  W.diag().zeros();
+  int n = W.n_rows;
 
-  int numNodes = W.n_rows;
-  arma::vec localEfficiencies(numNodes, fill::zeros); // Initialize vector for local efficiencies
-  
-  // Convert weights to lengths
-  arma::mat lengths = 1 / W; // Assuming length_inversion() translates to this
-  lengths.diag().zeros(); // Ensure diagonal elements are zero
-  
-  for (int node = 0; node < numNodes; ++node) {
-    arma::uvec neighbors = find(W.row(node) > 0); // Identify neighbors of the current node
-    
-    if (neighbors.size() <= 1) continue; // Skip if node has 1 or fewer neighbors
+  arma::vec E(n, arma::fill::zeros);
+  arma::mat A = arma::conv_to<arma::mat>::from(W > 0);
 
-    // Create subgraph
-    arma::mat subgraphLengths = lengths(neighbors, neighbors);
+  // Precompute cube-root weights: W^(1/3)
+  arma::mat cubeW = arma::pow(W, 1.0 / 3.0);
 
-    if (subgraphLengths.max() == 0) continue; // Skip if neighbors are not connected
-    
-    // Calculate the shortest paths in the subgraph
-    arma::mat distances = 1 / floydWarshallRcpp(subgraphLengths);
-    distances.diag().zeros(); // Zero out the diagonal to avoid division by zero in efficiency calculation
-    
-    // Calculate efficiency
-    arma::mat efficiencyMatrix = distances + trans(distances);
-    arma::vec numerator = sum(efficiencyMatrix, 1);
-    double denominator = sum(numerator);
+  // Precompute cube-root lengths: (1/w)^(1/3) for non-zero w, else 0
+  arma::mat cubeL(n, n, arma::fill::zeros);
+  for (int i = 0; i < n; i++)
+    for (int j = 0; j < n; j++)
+      if (W(i, j) > 0) cubeL(i, j) = std::pow(1.0 / W(i, j), 1.0 / 3.0);
 
-    if (denominator != 0) {
-      localEfficiencies(node) = sum(numerator) / (denominator * 2);
+  for (int node = 0; node < n; node++) {
+    arma::uvec nbrs = arma::find(W.row(node) > 0);
+    if (nbrs.n_elem <= 1) continue;
+
+    // Symmetrised cube-root weight vector (BCT formula: sw = W(i,V).^(1/3) + W(V,i).^(1/3))
+    arma::vec sw = cubeW.row(node).cols(nbrs).t() + cubeW.col(node).rows(nbrs);
+
+    // Subgraph cube-root lengths and shortest paths
+    arma::mat D = floydWarshallRcpp(cubeL(nbrs, nbrs));
+    arma::mat e = 1.0 / D;
+    e.diag().zeros();
+    arma::mat se = e + e.t();
+
+    // Numerator: sum((sw * sw^T) .* se) / 2
+    double numer = arma::accu((sw * sw.t()) % se) / 2.0;
+
+    if (numer > 0.0) {
+      arma::vec sa = A.row(node).cols(nbrs).t() + A.col(node).rows(nbrs);
+      double denom = std::pow(arma::accu(sa), 2.0) - arma::dot(sa, sa);
+      E(node) = numer / denom;
     }
   }
-  
-  return localEfficiencies;
+
+  return E;
 }

@@ -33,7 +33,7 @@ NumericMatrix dijkstraAllPairs(const NumericMatrix& matrix) {
 
     // Implementing Dijkstra's algorithm for each vertex
     for (int src = 0; src < V; src++) {
-        std::vector<double> dist(V, std::numeric_limits<double>::max());
+        std::vector<double> dist(V, std::numeric_limits<double>::infinity());
         std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>, std::greater<std::pair<double, int>>> pq;
 
         dist[src] = 0.0;

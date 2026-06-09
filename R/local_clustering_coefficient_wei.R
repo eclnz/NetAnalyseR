@@ -19,7 +19,7 @@
 #' @export
 local_clustering_coefficient_wei<- function(W, validate = TRUE) {
   # Ensure W is a valid matrix and convert it to matrix form if necessary
-  if(validate){validate_matrix(W)}
+  if(validate){W <- validate_matrix(W)}
   # Call C++ function
   C <- localClusteringCoefficientWei(W)
   # Return the vector of clustering coefficients

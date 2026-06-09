@@ -15,7 +15,7 @@
 #' intra_node(W)
 #' @export
 intra_node <- function(W, validate = TRUE) {
-  if(validate){validate_matrix(W)} # Validate the input matrix
+  if(validate){W <- validate_matrix(W)} # Validate the input matrix
 
   # Extract the diagonal of the matrix to focus on self-connections
   # The diagonal contains the weights of connections that initiate and terminate on the same node

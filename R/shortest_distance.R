@@ -24,7 +24,7 @@
 shortest_distance <- function(L, validate = TRUE) {
   # Check input matrix
   if(validate){
-    validate_matrix(L)
+    L <- validate_matrix(L)
   }
 
   # Initialize the distance matrix and set diagonal distances to zero

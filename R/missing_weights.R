@@ -18,7 +18,7 @@
 #'
 missing_weights <- function(W, validate = TRUE) {
   # Validate the input matrix to ensure it conforms to expected structure
-  validate_matrix(W)
+  W <- validate_matrix(W)
   # Calculate inter-node weights (between different nodes)
   inter <- inter_node(W)
   # Calculate intra-node weights (within the same node)
