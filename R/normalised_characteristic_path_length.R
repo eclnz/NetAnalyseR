@@ -1,75 +1,43 @@
-
-
 #' Calculate Normalized Characteristic Path Length
 #'
 #' @title Normalized Characteristic Path Length Calculation
-#' @description Computes the normalized characteristic path length for a given network, which can be provided either as a matrix or within a list alongside randomized matrices.
-#' This function first checks if the input is a matrix or a list. If no array of randomized matrices is provided (or not included in the list), one is generated.
-#' The function then calculates the average characteristic path length for the random array and normalizes the characteristic path length of the input network by this average.
+#' @description Computes the normalized characteristic path length for a given network.
+#' Accepts either a numeric matrix or a list containing a matrix and array of random matrices already generated.
+#' If no array of randomized matrices is provided, one is generated.
 #' The list elements must not be named.
-#' @param mat_list Either a square matrix representing the network for which the characteristic path length is to be calculated, or a list containing the network matrix and an optional 3D array of randomized matrices for comparison.
-#' @param rand_array An optional 3D array of randomized matrices for comparison if the input is a single matrix. If NULL and the input is a matrix,
-#' a set of randomized matrices is generated. This parameter is ignored if the input is a list.
-#' @param validate Whether to validate the input matrix.
-#' @return The normalized characteristic path length, computed as the ratio of the characteristic path length of the input network to the average characteristic path length of the randomized networks.
+#' @param mat_list Either a square matrix or a list containing the network matrix and an optional 3D array of randomized matrices.
+#' @param rand_array An optional 3D array of randomized matrices for comparison if the input is a single matrix.
+#' @return The normalized characteristic path length.
 #' @examples
-#' # Example for a single matrix input
 #' W <- matrix(c(0, 2, 1, 0, 2, 0, 3, 5, 1, 3, 0, 6, 0, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' norm_char_path_length <- normalised_characteristic_path_length(W)
 #' W_rand <- generateRewiredMatrices(W, 100)
 #' W_rand <- abind::abind(W_rand, along = 3)
 #' norm_char_path_length <- normalised_characteristic_path_length(list(W, W_rand))
-#' # Can also be called with the following:
 #' norm_char_path_length <- normalised_characteristic_path_length(W, W_rand)
 #' @export
 
-normalised_characteristic_path_length <- function(mat_list, rand_array = NULL, validate = TRUE) {
-  if(is.matrix(mat_list)){
-    if(validate){validate_matrix(mat_list)}
-    if(network_density(mat_list, FALSE)==1){
+normalised_characteristic_path_length <- function(mat_list, rand_array = NULL) {
+  if (is.matrix(mat_list)) {
+    W <- validate_matrix(mat_list)
+    if (network_density_(W) == 1) {
       warning("Network density is equal to 1. Network cannot be rewired while maintaining degree distribution\n
               This may make results incorrect.")
     }
-    # If the global clustering coefficient is 0 then the normalised clustering coefficient will be 0 and math errors will be created by 0 division.
-    if(characteristic_path_length(mat_list, FALSE)==0){
-      return(0)
-    }
-    # Generate randomized matrices if not provided
     if (is.null(rand_array)) {
-      rand_array <- generateRewiredMatrices(mat_list, 100) %>%
-        abind::abind(along = 3)
+      rand_array <- abind::abind(generateRewiredMatrices(W, 100), along = 3)
     }
-    # Validate that rand_array is indeed an array
-    if (!is.array(rand_array)) {
-      stop("Random array specified is not in the form of an array")
-    }
-    # Calculate the average clustering coefficient for the random array
-    rand_cpl <- mean(apply(rand_array, MARGIN = 3, FUN = function(x) characteristic_path_length(x, FALSE)))
-    # Calculate the clustering coefficient for the input matrix
-    cpl <- characteristic_path_length(mat_list, FALSE)
-    # Normalize the clustering coefficient by the random array's average
-    norm_cpl <- cpl / rand_cpl
-    return(norm_cpl)
+    if (!is.array(rand_array)) stop("Random array specified is not in the form of an array")
+    return(normalised_characteristic_path_length_(W, rand_array))
   }
-  if(is.list(mat_list)){
-    if(network_density(mat_list[[1]], FALSE)==1){
+  if (is.list(mat_list)) {
+    W <- mat_list[[1]]
+    ra <- mat_list[[2]]
+    if (network_density_(W) == 1) {
       warning("Network density is equal to 1. Network cannot be rewired while maintaining degree distribution\n
               This may make results incorrect.")
     }
-    # If the global clustering coefficient is 0 then the normalised clustering coefficient will be 0 and mat_list[[1]]h errors will be created by 0 division.
-    if(characteristic_path_length(mat_list[[1]], FALSE)==0){
-      return(0)
-    }
-    # Validate that rand_array is indeed an array
-    if (!is.array(mat_list[[2]])) {
-      stop("Random array specified is not in the form of an array")
-    }
-    # Calculate the average clustering coefficient for the random array
-    rand_cpl <- mean(apply(mat_list[[2]], MARGIN = 3, FUN = function(x) characteristic_path_length(x, FALSE)))
-    # Calculate the clustering coefficient for the input matrix
-    cpl <- characteristic_path_length(mat_list[[1]], FALSE)
-    # Normalize the clustering coefficient by the random array's average
-    norm_cpl <- cpl / rand_cpl
-    return(norm_cpl)
+    if (!is.array(ra)) stop("Random array specified is not in the form of an array")
+    return(normalised_characteristic_path_length_(W, ra))
   }
 }

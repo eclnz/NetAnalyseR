@@ -8,7 +8,6 @@
 #' @param W A matrix representing the network, where rows and columns correspond to
 #' nodes, and the matrix elements represent the weight of the connections between
 #' these nodes.
-#' @param validate Whether to validate the input matrix.
 #' @return The calculated missing weights in the network.
 #' @examples
 #' # Example matrix representing weighted connections between nodes
@@ -16,17 +15,6 @@
 #' missing_weights(W)
 #' @export
 #'
-missing_weights <- function(W, validate = TRUE) {
-  # Validate the input matrix to ensure it conforms to expected structure
-  W <- validate_matrix(W)
-  # Calculate inter-node weights (between different nodes)
-  inter <- inter_node(W)
-  # Calculate intra-node weights (within the same node)
-  intra <- intra_node(W)
-  # Compute the total weight with a significance level of 1 significant figure
-  total <- signif((inter + intra), 1)
-  # Determine the missing weights by subtracting the sum of inter and intra-node weights from total
-  missing <- total - (inter + intra)
-  # Return the missing weights in the network
-  return(missing)
+missing_weights <- function(W) {
+  missing_weights_(validate_matrix(W))
 }

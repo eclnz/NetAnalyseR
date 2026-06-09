@@ -8,7 +8,6 @@
 #'
 #' @param W A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 #'          Weights should be non-negative, and diagonal elements (self-loops) are ignored.
-#' @param validate Whether to validate the input matrix.
 #' @return A numeric vector of length equal to the number of nodes in the graph, where each element represents
 #'         the local efficiency of the corresponding node.
 #' @examples
@@ -17,7 +16,6 @@
 #' local_efficiency_wei(W)
 #' @export
 #'
-local_efficiency_wei <- function(W, validate = TRUE) {
-  if(validate){ W <- validate_matrix(W) }
-  localEfficiencyWei(W)
+local_efficiency_wei <- function(W) {
+  local_efficiency_wei_(validate_matrix(W))
 }

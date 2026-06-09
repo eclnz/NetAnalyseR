@@ -1,8 +1,8 @@
 
-network_deviation <- function(control_array, matrices_array, subject_names = NULL, threshold = 2.5) {
+network_deviation <- function(control_array, matrices_array, subject_names = NULL, threshold = 2.5, edge_prevalence_threshold = 0.35) {
   # Calculate the mean and standard deviation for the control group
   mean_control <- apply(control_array, c(1, 2), mean)
-  mean_control_bin_35 <- apply(control_array>0, c(1, 2), mean)>0.35
+  mean_control_bin <- apply(control_array > 0, c(1, 2), mean) > edge_prevalence_threshold
   sd_control <- apply(control_array, c(1, 2), sd)
 
   # Function to calculate deviation for each subject
@@ -10,11 +10,11 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
     # Calculate Z-scores
     z_matrix <- abs((subject_matrix - mean_control) / sd_control)
     # Zero diagonal
-    diag(z_matrix)<- 0
+    diag(z_matrix) <- 0
     # Replace NaNs created by 0/0 and Infs created by x/0 with 0
-    z_matrix[is.nan(z_matrix)|is.infinite(z_matrix)] <- 0
-    # Identify edges in subject which are present in 35% of controls
-    z_matrix <- ((subject_matrix>0)*mean_control_bin_35)*z_matrix
+    z_matrix[is.nan(z_matrix) | is.infinite(z_matrix)] <- 0
+    # Identify edges in subject which are present in edge_prevalence_threshold proportion of controls
+    z_matrix <- ((subject_matrix > 0) * mean_control_bin) * z_matrix
     # Identify edges with deviations beyond the threshold
     edge_outlier <- z_matrix > threshold
     # Sum deviations for each node
@@ -27,7 +27,7 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
   network_deviations <- apply(matrices_array, MARGIN = 3, FUN = calculate_deviation)
 
   # Generate subject identifiers
-  subject_identifiers <- if(is.null(subject_names)) {
+  subject_identifiers <- if (is.null(subject_names)) {
     paste0("subject_", seq_along(network_deviations))
   } else {
     subject_names
@@ -47,6 +47,8 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' @param matrices_array A 3D array where each slice corresponds to a matrix for a specific participant.
 #' @param control_group A character specifying the level of `group` which should be considered the control group.
 #' @param threshold A numeric value defining the Z-score threshold for considering deviations as significant.
+#' @param edge_prevalence_threshold A numeric value between 0 and 1. Only edges present in at least this
+#'   proportion of control subjects are considered when computing deviations. Defaults to 0.35.
 #' @return A data frame that joins the input data_frame with computed network deviations for each case.
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
@@ -66,20 +68,20 @@ network_deviation <- function(control_array, matrices_array, subject_names = NUL
 #' @importFrom stats sd
 #' @export
 
-compute_network_deviation <- function(data_frame, matrices_array, control_group, threshold = 3) {
-  if(!"group" %in% names(data_frame)) {
+compute_network_deviation <- function(data_frame, matrices_array, control_group, threshold = 3, edge_prevalence_threshold = 0.35) {
+  if (!"group" %in% names(data_frame)) {
     stop("The dataframe is missing the 'group' column.", call. = FALSE)
   }
-  if(!"subject" %in% names(data_frame)) {
+  if (!"subject" %in% names(data_frame)) {
     stop("The dataframe is missing the 'subject' column.", call. = FALSE)
   }
-  if(!is.array(matrices_array)){
+  if (!is.array(matrices_array)) {
     stop("The matrices array is not in array format.", call. = FALSE)
   }
-  if(!(is.character(control_group) & length(control_group)==1)){
+  if (!(is.character(control_group) & length(control_group) == 1)) {
     stop("The control group specified must be a character string with a length of 1.", call. = FALSE)
   }
-  if(!any(data_frame$group == control_group)){
+  if (!any(data_frame$group == control_group)) {
     stop("No observations of the control group ", control_group, " were found", call. = FALSE)
   }
   # Identify control and case indices based on the group column
@@ -87,30 +89,31 @@ compute_network_deviation <- function(data_frame, matrices_array, control_group,
   # Extract control and case arrays based on identified indices
   control_array <- matrices_array[, , ctrl_indices]
   # Calculate the network deviation of each network from the control group
-  network_deviation_df <- network_deviation(control_array, matrices_array, data_frame$subject, threshold = threshold)
+  network_deviation_df <- network_deviation(control_array, matrices_array, data_frame$subject,
+                                             threshold = threshold,
+                                             edge_prevalence_threshold = edge_prevalence_threshold)
   # Join the original data_frame with the computed network deviation data frame on subject
   merged_df <- dplyr::left_join(data_frame, network_deviation_df, by = "subject")
 
   return(merged_df)
 }
 
-nodal_deviation <- function(control_array, matrices_array, subject_names = NULL, threshold) {
+nodal_deviation <- function(control_array, matrices_array, subject_names = NULL, threshold, edge_prevalence_threshold = 0.35) {
   # Calculate the mean and standard deviation for the control group
   mean_control <- apply(control_array, c(1, 2), mean)
   sd_control <- apply(control_array, c(1, 2), stats::sd)
-  mean_control_bin_35 <- apply(control_array>0, c(1, 2), mean)>0.35
-
+  mean_control_bin <- apply(control_array > 0, c(1, 2), mean) > edge_prevalence_threshold
 
   # Function to calculate deviation for each case
   calculate_deviation <- function(case_matrix) {
     # Calculate Z-scores
     z_matrix <- abs((case_matrix - mean_control) / sd_control)
     # Zero diagonal
-    diag(z_matrix)<- 0
+    diag(z_matrix) <- 0
     # Replace NaNs created by 0/0 and Infs created by x/0 with 0
-    z_matrix[is.nan(z_matrix)|is.infinite(z_matrix)] <- 0
-    # Identify edges in case which are present in 35% of controls
-    z_matrix <- ((case_matrix>0)*mean_control_bin_35)*z_matrix
+    z_matrix[is.nan(z_matrix) | is.infinite(z_matrix)] <- 0
+    # Identify edges in case which are present in edge_prevalence_threshold proportion of controls
+    z_matrix <- ((case_matrix > 0) * mean_control_bin) * z_matrix
     # Identify edges with deviations beyond the threshold
     edge_outlier <- z_matrix > threshold
     # Sum deviations for each node
@@ -126,7 +129,7 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
   colnames(nodal_deviations_df) <- paste0("node", seq_len(ncol(nodal_deviations_df)))
 
   # Generate subject identifiers
-  subject_identifiers <- if(is.null(subject_names)) {
+  subject_identifiers <- if (is.null(subject_names)) {
     paste0("subject_", seq_along(nodal_deviations_df$node1))
   } else {
     subject_names
@@ -153,6 +156,8 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
 #' @param matrices_array A 3D array where each slice corresponds to a connectivity matrix for a subject.
 #' @param control_group A character specifying the level of `group` which should be considered the control group.
 #' @param threshold A numeric value defining the Z-score threshold for considering deviations significant.
+#' @param edge_prevalence_threshold A numeric value between 0 and 1. Only edges present in at least this
+#'   proportion of control subjects are considered when computing deviations. Defaults to 0.35.
 #' @return A modified version of the original data frame that includes nodal deviation calculations for each subject.
 #' @examples
 #' data_dir <- system.file("extdata", package = "NetAnalyseR")
@@ -170,20 +175,20 @@ nodal_deviation <- function(control_array, matrices_array, subject_names = NULL,
 #' @references Gugger, J. J., Sinha, N., Huang, Y., Walter, A. E., Lynch, C., Kalyani, P., Smyk, N., Sandsmark, D., Diaz-Arrastia, R., & Davis, K. A. (2023). Structural brain network deviations predict recovery after traumatic brain injury. NeuroImage clinical, 38, 103392-103392. https://doi.org/10.1016/j.nicl.2023.103392
 #' @export
 
-compute_nodal_network_deviation <- function(data_frame, matrices_array, control_group, threshold= 3) {
-  if(!"group" %in% names(data_frame)) {
+compute_nodal_network_deviation <- function(data_frame, matrices_array, control_group, threshold = 3, edge_prevalence_threshold = 0.35) {
+  if (!"group" %in% names(data_frame)) {
     stop("The dataframe is missing the 'group' column.", call. = FALSE)
   }
-  if(!"subject" %in% names(data_frame)) {
+  if (!"subject" %in% names(data_frame)) {
     stop("The dataframe is missing the 'subject' column.", call. = FALSE)
   }
-  if(!is.array(matrices_array)){
+  if (!is.array(matrices_array)) {
     stop("The matrices array is not in array format.", call. = FALSE)
   }
-  if(!(is.character(control_group) & length(control_group)==1)){
+  if (!(is.character(control_group) & length(control_group) == 1)) {
     stop("The control group specified must be a character string with a length of 1.", call. = FALSE)
   }
-  if(!any(data_frame$group == control_group)){
+  if (!any(data_frame$group == control_group)) {
     stop("No observations of the control group ", control_group, " were found", call. = FALSE)
   }
   # Dataframe of controls not in long format (one row per subject the same as the matrices array)
@@ -196,11 +201,10 @@ compute_nodal_network_deviation <- function(data_frame, matrices_array, control_
   nodal_network_deviation_df <- nodal_deviation(control_array = matrices_array[, , ctrl_indices],
                                                 matrices_array = matrices_array,
                                                 subject_names = short_df$subject,
-                                                threshold = threshold)
+                                                threshold = threshold,
+                                                edge_prevalence_threshold = edge_prevalence_threshold)
   # Merge the calculated nodal network deviations with the original data frame
   merged_df <- dplyr::left_join(data_frame, nodal_network_deviation_df, by = c("subject", "node"))
 
   return(merged_df)
 }
-
-

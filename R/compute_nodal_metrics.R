@@ -7,6 +7,8 @@
 #' @param nodal_metrics A vector of strings specifying the nodal metrics to be calculated.
 #' @param subject_names An optional vector of subject identifiers. If not provided, subjects will be named
 #' sequentially as Subject1, Subject2, etc.
+#' @param workers Number of parallel workers for subject-level computation. Values greater than 1
+#' use \code{parallel::mclapply} (Unix only). Defaults to 1 (sequential).
 #'
 #' @return A long-format data frame containing the calculated nodal metrics for each node and subject.
 #' Each row corresponds to a node-subject combination with columns for node number, subject identifier, and the
@@ -24,7 +26,7 @@
 #' @importFrom dplyr arrange
 #' @importFrom magrittr %>%
 #'
-compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names = NULL) {
+compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names = NULL, workers = 1L) {
 
   # Define valid nodal metrics
   valid_nodal_metrics <- c("local_clustering_coefficient_wei", "local_efficiency_wei", "node_strength", "self_connectivity")
@@ -49,9 +51,29 @@ compute_nodal_metrics <- function(matrices_array, nodal_metrics, subject_names =
             paste0(valid_nodal_metrics, collapse = ", \n - "))
   }
 
+  # Named dispatch map — explicit, statically analysable, no get()
+  nodal_fns <- list(
+    local_clustering_coefficient_wei = local_clustering_coefficient_wei_,
+    local_efficiency_wei             = local_efficiency_wei_,
+    node_strength                    = node_strength_,
+    self_connectivity                = self_connectivity_
+  )
+
+  n_subjects <- dim(matrices_array)[3]
+
   # Compute specified valid metrics
-  nodal <- lapply(valid_user_metrics, function(metric_function) {
-    apply(matrices_array, MARGIN = 3, FUN = get(metric_function))
+  nodal <- lapply(valid_user_metrics, function(metric_name) {
+    fn <- nodal_fns[[metric_name]]
+    if (workers > 1L) {
+      result_list <- parallel::mclapply(
+        seq_len(n_subjects),
+        function(i) fn(matrices_array[, , i]),
+        mc.cores = workers
+      )
+      do.call(cbind, result_list)
+    } else {
+      apply(matrices_array, MARGIN = 3, FUN = fn)
+    }
   })
 
   # Create data frames for each metric and reshape to long format

@@ -8,37 +8,12 @@
 #'
 #' @param W A square, symmetric matrix representing the weighted adjacency matrix of an undirected graph.
 #'          Weights should be non-negative, and diagonal elements (self-loops) are ignored in the calculation.
-#' @param validate Whether to validate the input matrix.
 #' @return A numeric value representing the global efficiency of the graph.
 #' @examples
 #' # Example: Create a 3x3 weighted adjacency matrix
 #' W <- matrix(c(0, 2, 1, 2, 0, 3, 1, 3, 0), nrow = 3, byrow = TRUE)
 #' global_efficiency_wei(W)
 #' @export
-global_efficiency_wei <- function(W, validate = TRUE) {
-  # Validate the input matrix to ensure it is a proper adjacency matrix for a graph
-  if(validate){
-    W <- validate_matrix(W)
-  }
-  # Remove self-loops by setting diagonal elements to zero
-  diag(W) <- 0
-
-  # Number of nodes in the graph
-  numNodes <- nrow(W)
-
-  # Conversion factor for cube root, used in distance calculations
-  cubeRootFactor <- 1 / 3
-
-  # Convert weights to lengths for distance calculation
-  lengthsMatrix <- length_inversion(W, FALSE)
-
-  # Calculate the inverse distance matrix, representing the efficiency of each pair of nodes
-  inverseDistanceMatrix <- 1 / shortest_distance(lengthsMatrix, FALSE)
-
-  # Calculate global efficiency as the sum of upper triangular part of the inverse distance matrix
-  # divided by the total number of possible connections (excluding self-connections)
-  globalEfficiency <- sum(inverseDistanceMatrix[upper.tri(inverseDistanceMatrix)], na.rm = TRUE) / (numNodes * (numNodes - 1) / 2)
-
-  # Return the global efficiency of the graph
-  return(globalEfficiency)
+global_efficiency_wei <- function(W) {
+  global_efficiency_wei_(validate_matrix(W))
 }

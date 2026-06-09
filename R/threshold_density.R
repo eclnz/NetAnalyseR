@@ -33,7 +33,7 @@ threshold_density <- function(mat, target_density, validate = TRUE) {
   # Binary search for optimal threshold
   while (step_size > tolerance) {
     mat_thr <- threshold_mat_local(mat, current_threshold)
-    current_density <- network_density(mat_thr, validate = FALSE)
+    current_density <- network_density_(mat_thr)
 
     density_difference <- current_density - target_density
 
