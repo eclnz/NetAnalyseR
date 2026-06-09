@@ -17,6 +17,13 @@
 #' norm_char_path_length <- normalised_characteristic_path_length(W, W_rand)
 #' @export
 
+normalised_characteristic_path_length_ <- function(W, rand_array) {
+  cpl <- characteristic_path_length_(W)
+  if (cpl == 0) return(0)
+  rand_cpl <- mean(apply(rand_array, 3, characteristic_path_length_))
+  cpl / rand_cpl
+}
+
 normalised_characteristic_path_length <- function(mat_list, rand_array = NULL) {
   if (is.matrix(mat_list)) {
     W <- validate_matrix(mat_list)

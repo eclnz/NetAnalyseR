@@ -7,6 +7,10 @@
 #' @param target A single numeric value giving the desired total inter-node weight.
 #' @return A matrix of the same dimensions as \code{mat} with all weights rescaled.
 #' @export
+normalise_inter_node_ <- function(W, target) {
+  W * (target / inter_node_(W))
+}
+
 normalise_inter_node <- function(mat, target) {
   normalise_inter_node_(validate_matrix(mat), target)
 }

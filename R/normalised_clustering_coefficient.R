@@ -21,6 +21,13 @@
 #' @importFrom abind abind
 #' @export
 
+normalised_clustering_coefficient_ <- function(W, rand_array) {
+  c_obs <- global_clustering_coefficient_wei_(W)
+  if (c_obs == 0) return(0)
+  rand_c <- mean(apply(rand_array, 3, global_clustering_coefficient_wei_))
+  c_obs / rand_c
+}
+
 normalised_clustering_coefficient <- function(mat_list, rand_array = NULL) {
   if (is.matrix(mat_list)) {
     W <- validate_matrix(mat_list)

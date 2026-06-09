@@ -14,6 +14,10 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' global_clustering_coefficient_wei(W)
 #' @export
+global_clustering_coefficient_wei_ <- function(W) {
+  mean(localClusteringCoefficientWei(W))
+}
+
 global_clustering_coefficient_wei <- function(W) {
   global_clustering_coefficient_wei_(validate_matrix(W))
 }

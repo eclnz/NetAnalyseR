@@ -12,6 +12,10 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' self_connectivity(W)
 #' @export
+self_connectivity_ <- function(W) {
+  diag(W)
+}
+
 self_connectivity <- function(W) {
   self_connectivity_(validate_matrix(W))
 }

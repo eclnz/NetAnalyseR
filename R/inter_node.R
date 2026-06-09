@@ -15,6 +15,11 @@
 #'               2, 4, 5, 0), byrow = TRUE, nrow = 4)
 #' inter_node(W)
 #' @export
+inter_node_ <- function(W) {
+  diag(W) <- 0
+  sum(W[lower.tri(W)])
+}
+
 inter_node <- function(W) {
   inter_node_(validate_matrix(W))
 }

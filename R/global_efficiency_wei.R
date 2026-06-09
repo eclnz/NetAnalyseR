@@ -14,6 +14,13 @@
 #' W <- matrix(c(0, 2, 1, 2, 0, 3, 1, 3, 0), nrow = 3, byrow = TRUE)
 #' global_efficiency_wei(W)
 #' @export
+global_efficiency_wei_ <- function(W) {
+  diag(W) <- 0
+  n <- nrow(W)
+  inv_D <- 1 / shortest_distance_(length_inversion_(W))
+  sum(inv_D[upper.tri(inv_D)], na.rm = TRUE) / (n * (n - 1) / 2)
+}
+
 global_efficiency_wei <- function(W) {
   global_efficiency_wei_(validate_matrix(W))
 }

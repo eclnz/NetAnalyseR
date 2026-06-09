@@ -15,6 +15,13 @@
 #' missing_weights(W)
 #' @export
 #'
+missing_weights_ <- function(W) {
+  inter <- inter_node_(W)
+  intra <- intra_node_(W)
+  total <- signif(inter + intra, 1)
+  total - (inter + intra)
+}
+
 missing_weights <- function(W) {
   missing_weights_(validate_matrix(W))
 }

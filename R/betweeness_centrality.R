@@ -11,6 +11,14 @@
 #' betweenness_wei(W)
 #' @export
 #'
+betweenness_wei_ <- function(W) {
+  diag(W) <- 0
+  L <- length_inversion_(W)
+  D <- shortest_distance_(L)
+  NP <- shortest_distance_((L > 0) + 0)
+  calculateBetweennessCentrality(D, NP)
+}
+
 betweenness_wei <- function(W) {
   betweenness_wei_(validate_matrix(W))
 }

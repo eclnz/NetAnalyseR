@@ -20,6 +20,13 @@
 #'
 #' @export
 #'
+# Floyd-Warshall O(n^3) outperforms Dijkstra O(n * E * log n) when the graph is
+# dense (most node pairs directly connected); empirically the crossover is ~0.55.
+shortest_distance_ <- function(L) {
+  diag(L) <- 0
+  if (network_density_(L) > 0.55) floydWarshallRcpp(L) else dijkstraAllPairs(L)
+}
+
 shortest_distance <- function(L) {
   shortest_distance_(validate_matrix(L))
 }

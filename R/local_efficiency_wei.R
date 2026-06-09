@@ -16,6 +16,10 @@
 #' local_efficiency_wei(W)
 #' @export
 #'
+local_efficiency_wei_ <- function(W) {
+  localEfficiencyWei(W)
+}
+
 local_efficiency_wei <- function(W) {
   local_efficiency_wei_(validate_matrix(W))
 }

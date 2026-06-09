@@ -16,6 +16,12 @@
 #'               2, 4, 5, 0), byrow = TRUE, nrow = 4)
 #' network_density(W)
 #' @export
+network_density_ <- function(W) {
+  diag(W) <- 0
+  A <- W > 0
+  mean(A[lower.tri(A)])
+}
+
 network_density <- function(W) {
   network_density_(validate_matrix(W))
 }

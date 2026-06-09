@@ -12,6 +12,13 @@
 #'
 #' @export
 #'
+length_inversion_ <- function(W) {
+  diag(W) <- 0
+  E <- which(W != 0, arr.ind = TRUE)
+  W[E] <- 1 / W[E]
+  W
+}
+
 length_inversion <- function(W) {
   length_inversion_(validate_matrix(W))
 }

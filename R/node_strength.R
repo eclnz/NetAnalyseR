@@ -11,6 +11,11 @@
 #' W <- matrix(c(0, 2, 1, 4, 2, 0, 3, 5, 1, 3, 0, 6, 4, 5, 6, 0), nrow = 4, byrow = TRUE)
 #' node_strength(W)
 #' @export
+node_strength_ <- function(W) {
+  diag(W) <- 0
+  colSums(W)
+}
+
 node_strength <- function(W) {
   node_strength_(validate_matrix(W))
 }

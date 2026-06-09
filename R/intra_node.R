@@ -13,6 +13,10 @@
 #'               7, 8, 9), byrow = TRUE, nrow = 3)
 #' intra_node(W)
 #' @export
+intra_node_ <- function(W) {
+  sum(diag(W))
+}
+
 intra_node <- function(W) {
   intra_node_(validate_matrix(W))
 }

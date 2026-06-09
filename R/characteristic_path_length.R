@@ -18,6 +18,13 @@
 #' characteristic_path_length(W)
 #' @export
 #'
+characteristic_path_length_ <- function(W) {
+  diag(W) <- 0
+  D <- shortest_distance_(length_inversion_(W))
+  D[is.infinite(D)] <- NA
+  mean(D[lower.tri(D)])
+}
+
 characteristic_path_length <- function(W) {
   characteristic_path_length_(validate_matrix(W))
 }
