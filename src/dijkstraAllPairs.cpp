@@ -2,6 +2,8 @@
 #include <vector>
 #include <queue>
 #include <limits>
+#include <algorithm>
+#include <utility>
 
 using namespace Rcpp;
 
@@ -31,17 +33,31 @@ NumericMatrix dijkstraAllPairs(const NumericMatrix& matrix) {
     // Prepare the distance matrix to return
     NumericMatrix distMatrix(V, V);
 
+    // Declared once for the whole all-pairs run rather than once per source, so dist's
+    // buffer is allocated a single time and reused.
+    typedef std::pair<double, int> QueueEntry;
+    std::vector<double> dist(V);
+    std::priority_queue<QueueEntry, std::vector<QueueEntry>, std::greater<QueueEntry>> pq;
+
     // Implementing Dijkstra's algorithm for each vertex
     for (int src = 0; src < V; src++) {
-        std::vector<double> dist(V, std::numeric_limits<double>::max());
-        std::priority_queue<std::pair<double, int>, std::vector<std::pair<double, int>>, std::greater<std::pair<double, int>>> pq;
+        std::fill(dist.begin(), dist.end(), std::numeric_limits<double>::max());
+        // std::priority_queue has no clear(), so swap in an empty one to reset it.
+        // (This releases its buffer, so only dist actually reuses its storage.)
+        std::priority_queue<QueueEntry, std::vector<QueueEntry>, std::greater<QueueEntry>>().swap(pq);
 
         dist[src] = 0.0;
         pq.push({0.0, src});
 
         while (!pq.empty()) {
+            double d = pq.top().first;
             int u = pq.top().second;
             pq.pop();
+
+            // Lazy deletion: an entry pushed before a shorter path to u was found is
+            // stale by the time it is popped, and re-relaxing u's edges would be
+            // wasted work.
+            if (d > dist[u]) continue;
 
             for (const auto& edge : graph[u]) {
                 int v = edge.to;

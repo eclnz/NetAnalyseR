@@ -31,12 +31,17 @@ arma::mat floydWarshallRcpp(const arma::mat& inputMatrix) {
         }
     }
 
-    // Apply the Floyd-Warshall algorithm
+    // Apply the Floyd-Warshall algorithm.
+    // arma::mat is column-major, so the row index varies fastest in memory: keeping i
+    // innermost makes distanceMatrix(i, k) and distanceMatrix(i, j) walk contiguously
+    // down their columns. distanceMatrix(k, j) does not depend on i, so it is read once
+    // per j instead of on every inner iteration.
     for (unsigned int k = 0; k < numVertices; ++k) {
-        for (unsigned int i = 0; i < numVertices; ++i) {
-            for (unsigned int j = 0; j < numVertices; ++j) {
-                if (distanceMatrix(i, k) + distanceMatrix(k, j) < distanceMatrix(i, j)) {
-                    distanceMatrix(i, j) = distanceMatrix(i, k) + distanceMatrix(k, j);
+        for (unsigned int j = 0; j < numVertices; ++j) {
+            const double dkj = distanceMatrix(k, j);
+            for (unsigned int i = 0; i < numVertices; ++i) {
+                if (distanceMatrix(i, k) + dkj < distanceMatrix(i, j)) {
+                    distanceMatrix(i, j) = distanceMatrix(i, k) + dkj;
                 }
             }
         }
